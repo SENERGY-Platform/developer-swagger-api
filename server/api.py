@@ -2,7 +2,7 @@ import schemas
 import db
 import json
 import requests
-from flask import request
+from flask import request, jsonify
 from flask_restful import Resource
 import os 
 import server
@@ -13,8 +13,11 @@ class SwaggerAPI(Resource):
     def get(self):
         response = requests.get("http://petstore.swagger.io/v2/swagger.json").json()
         db.db["swagger"].insert({
-            "/path": response
+            "_id": "/path",
+            "swagger": response
         })
         cursor = db.db.find({})
         for document in cursor:
             print(document)
+
+        return jsonify([])
