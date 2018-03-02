@@ -8,7 +8,12 @@ from flask_restful import Resource
 import os 
 import server
 import logging
+from prance import ResolvingParser
 
 class SwaggerAPI(Resource):
     def get(self):
-        pass
+        """
+        parser = ResolvingParser('path/to/my/swagger.yaml')
+        """
+        response = requests.get("http://petstore.swagger.io/v2/swagger.json").json()
+        db.db.insert_one(response)

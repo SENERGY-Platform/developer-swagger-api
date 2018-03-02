@@ -1,3 +1,5 @@
-from flask_sqlalchemy import SQLAlchemy
+from pymongo import MongoClient
+import os 
 
-app_db = SQLAlchemy()
+client = MongoClient('mongodb://{host}:{port}/'.format(host=os.environ["DB_HOST"], port=os.environ["DB_PORT"]))
+db = client.swagger

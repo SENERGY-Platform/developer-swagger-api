@@ -5,6 +5,7 @@ services:
         image: swagger-api
         environment:
             - DB_HOST=swagger-db
+            - DB_PORT=27017
             - LADON=http://ladon.auth.rancher.internal:8080
         ports:
             - 8002:5000
