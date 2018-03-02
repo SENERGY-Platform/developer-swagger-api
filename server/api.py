@@ -11,8 +11,8 @@ from prance import ResolvingParser
 
 class SwaggerAPI(Resource):
     def get(self):
-        """
-        parser = ResolvingParser('path/to/my/swagger.yaml')
-        """
         response = requests.get("http://petstore.swagger.io/v2/swagger.json").json()
         db.db.insert_one(response)
+        cursor = db.db.find({})
+        for document in cursor:
+            print(document)
