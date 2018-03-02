@@ -14,7 +14,6 @@ app.logger.addHandler(logging.StreamHandler())
 app.logger.setLevel(logging.INFO)
 app_api = Api(app)
 app_api.add_resource(api.SwaggerAPI, '/swagger')
-db.app_db.init_app(app)
 
 @app.after_request
 def after_request(response):
