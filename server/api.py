@@ -14,11 +14,8 @@ class SwaggerAPI(Resource):
         response = requests.get("http://petstore.swagger.io/v2/swagger.json").json()
         print(response)
         db.db["swagger"].insert({
-            "path": "1"
+            "id": "path"
+            "swagger": ""
         })
-        cursor = db.db["swagger"].find({})
-        print(cursor)
-        for document in cursor:
-            print(document)
-
-        return jsonify([])
+        all_swagger = db.db["swagger"].find({})
+        return jsonify(list(map(lambda document: document.get("swagger"), all_swagger)))
