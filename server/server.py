@@ -13,7 +13,7 @@ app = Flask(__name__)
 app.logger.addHandler(logging.StreamHandler())
 app.logger.setLevel(logging.INFO)
 app_api = Api(app)
-app_api.add_resource(api.SwaggerAPI, '/swagger')
+app_api.add_resource(api.SwaggerAPI, '/developer/swagger')
 
 @app.after_request
 def after_request(response):
