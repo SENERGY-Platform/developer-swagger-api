@@ -1,0 +1,14 @@
+version: '2.1'
+services:
+    dev-backend-api:
+        container_name: swagger-api
+        image: swagger-api
+        environment:
+            - DB_HOST=swagger-db
+            - LADON=http://ladon.auth.rancher.internal:8080
+        ports:
+            - 8002:5000
+    swagger-db:
+        container_name: swagger-db
+        image: mongodb:latest
+
