@@ -13,8 +13,7 @@ class SwaggerAPI(Resource):
     def get(self):
         response = requests.get("http://petstore.swagger.io/v2/swagger.json").json()
         db.db["swagger"].insert({
-            "_id": "path",
-            "swagger": response
+            "path": response
         })
         cursor = db.db.find({})
         print(cursor)
