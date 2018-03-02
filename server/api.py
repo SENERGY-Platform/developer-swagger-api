@@ -12,7 +12,7 @@ from prance import ResolvingParser
 class SwaggerAPI(Resource):
     def get(self):
         response = requests.get("http://petstore.swagger.io/v2/swagger.json").json()
-        db.db.insert_one(response)
+        db.db.insert(response)
         cursor = db.db.find({})
         for document in cursor:
             print(document)
