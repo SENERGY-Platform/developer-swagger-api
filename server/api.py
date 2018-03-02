@@ -12,8 +12,9 @@ from prance import ResolvingParser
 class SwaggerAPI(Resource):
     def get(self):
         response = requests.get("http://petstore.swagger.io/v2/swagger.json").json()
+        print(response)
         db.db["swagger"].insert({
-            "path": response
+            "path": "1"
         })
         cursor = db.db.find({})
         print(cursor)
