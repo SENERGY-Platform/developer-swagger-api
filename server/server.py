@@ -40,8 +40,7 @@ delta_t=y-x
 secs=delta_t.seconds+1
 
 def update_swagger_files():
-    print "hello world"
-    #...
+    http://gitlab.wifa.uni-leipzig.de/api/v4/projects?private_token=" + os.environ["TOKEN"]
 
 t = Timer(secs, hello_world)
 t.start()
