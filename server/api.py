@@ -16,7 +16,7 @@ class SwaggerAPI(Resource):
         db.db["swagger"].insert({
             "path": "1"
         })
-        cursor = db.db.find({})
+        cursor = db.db["swagger"].find({})
         print(cursor)
         for document in cursor:
             print(document)
