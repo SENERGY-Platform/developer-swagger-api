@@ -8,6 +8,8 @@ import api
 import logging
 from time import strftime
 import traceback
+from datetime import datetime
+from threading import Timer
 
 app = Flask(__name__)
 app.logger.addHandler(logging.StreamHandler())
@@ -30,6 +32,20 @@ def after_request(response):
                       request.data
                       )
     return response
+"""
+x=datetime.today()
+y=x.replace(day=x.day+1, hour=1, minute=0, second=0, microsecond=0)
+delta_t=y-x
+
+secs=delta_t.seconds+1
+
+def update_swagger_files():
+    print "hello world"
+    #...
+
+t = Timer(secs, hello_world)
+t.start()
+"""
 
 if __name__ == '__main__':
     if os.environ["DEBUG"] == "true":
