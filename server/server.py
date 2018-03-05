@@ -70,10 +70,9 @@ def get_swagger_files_from_repos():
 
 
 if __name__ == '__main__':
+    get_swagger_files_from_repos()
+    get_swagger_files_from_repos_timer()
     if os.environ["DEBUG"] == "true":
         app.run(debug=True,host='0.0.0.0')
     else:
         app.run(debug=False, host='0.0.0.0')
-
-    get_swagger_files_from_repos()
-    get_swagger_files_from_repos_timer()
