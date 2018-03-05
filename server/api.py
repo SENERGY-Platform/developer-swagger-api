@@ -11,11 +11,12 @@ from prance import ResolvingParser
 
 class SwaggerAPI(Resource):
     def get(self):
-        response = requests.get("http://petstore.swagger.io/v2/swagger.json").json()
-        print(response)
-        db.db["swagger"].insert({
-            "id": "path",
-            "swagger": ""
-        })
         all_swagger = db.db["swagger"].find({})
+        # TODO: compare with ladon with role path and method, new header field 
+        payload = {
+            "subject": "role",
+            "action": "method",
+            "resource": "path"
+        }
+        #response = requests.get(os.environ["LADON"], payload=payload).json()
         return jsonify(list(map(lambda document: document.get("swagger"), all_swagger)))

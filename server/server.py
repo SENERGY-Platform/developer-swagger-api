@@ -10,6 +10,7 @@ from time import strftime
 import traceback
 from datetime import datetime
 from threading import Timer
+import requests
 
 app = Flask(__name__)
 app.logger.addHandler(logging.StreamHandler())
@@ -32,19 +33,29 @@ def after_request(response):
                       request.data
                       )
     return response
-"""
-x=datetime.today()
-y=x.replace(day=x.day+1, hour=1, minute=0, second=0, microsecond=0)
-delta_t=y-x
 
-secs=delta_t.seconds+1
+def get_swagger_files_from_repos_timer():
+    x=datetime.today()
+    y=x.replace(day=x.day+1, hour=1, minute=0, second=0, microsecond=0)
+    delta_t=y-x
+    secs=delta_t.seconds+1
+    t = Timer(secs, get_swagger_files_from_repos)
+    t.start()
 
-def update_swagger_files():
-    http://gitlab.wifa.uni-leipzig.de/api/v4/projects?private_token=" + os.environ["TOKEN"]
+def get_swagger_files_from_repos():
+    try:
+        response = requests.get("http://gitlab.wifa.uni-leipzig.de/api/v4/projects?private_token=" + os.environ["TOKEN"]).json()
+        app.logger.info("Got json file from api")
+        for project in response:
+            swagger_file = requests.get("http://gitlab.wifa.uni-leipzig.de/api/v4/projects/" + str(project.get("id")) + "/repository/files/swagger%2E.yaml?ref=master&private_token=" + os.environ["TOKEN"])
+            if swagger_file.status_code == 200:
+                db.db["swagger"].insert({
+                    "id": "path",
+                    "swagger": swagger_file.text
+                })
+    except Exception as e:
+        app.logger.error(e)
 
-t = Timer(secs, hello_world)
-t.start()
-"""
 
 if __name__ == '__main__':
     if os.environ["DEBUG"] == "true":
