@@ -18,6 +18,8 @@ app.logger.addHandler(logging.StreamHandler())
 app.logger.setLevel(logging.INFO)
 app_api = Api(app)
 app_api.add_resource(api.SwaggerAPI, '/developer/swagger')
+get_swagger_files_from_repos()
+get_swagger_files_from_repos_timer()
 
 @app.after_request
 def after_request(response):
@@ -70,8 +72,6 @@ def get_swagger_files_from_repos():
 
 
 if __name__ == '__main__':
-    get_swagger_files_from_repos()
-    get_swagger_files_from_repos_timer()
     if os.environ["DEBUG"] == "true":
         app.run(debug=True,host='0.0.0.0')
     else:
