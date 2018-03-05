@@ -11,7 +11,6 @@ from prance import ResolvingParser
 
 class SwaggerAPI(Resource):
     def get(self):
-        server.get_swagger_files_from_repos()
         all_swagger = db.db["swagger"].find({})
         for swagger in all_swagger:
             server.app.logger.info(swagger)

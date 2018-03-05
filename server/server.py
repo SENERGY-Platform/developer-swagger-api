@@ -46,23 +46,23 @@ def get_swagger_files_from_repos_timer():
 def get_swagger_files_from_repos():
     try:
         all_projects = []
-        response = requests.get("http://gitlab.wifa.uni-leipzig.de/api/v4/projects?private_token=" + os.environ["TOKEN"])
+        response = requests.get("https://gitlab.wifa.uni-leipzig.de/api/v4/projects?private_token=" + os.environ["TOKEN"])
         all_projects = all_projects + response.json()
         next_page = response.headers["X-Page"] != response.headers["X-Total-Pages"]
         while next_page:
-            response = requests.get("http://gitlab.wifa.uni-leipzig.de/api/v4/projects?private_token=" + os.environ["TOKEN"] + "&page=" + response.headers["X-Next-Page"])
+            response = requests.get("https://gitlab.wifa.uni-leipzig.de/api/v4/projects?private_token=" + os.environ["TOKEN"] + "&page=" + response.headers["X-Next-Page"])
             all_projects = all_projects + response.json()
             next_page = response.headers["X-Page"] != response.headers["X-Total-Pages"]
         for project in all_projects:
             app.logger.info("check project " + project.get("name"))
-            url = "http://gitlab.wifa.uni-leipzig.de/api/v4/projects/" + str(project.get("id")) + "/repository/files/swagger%2Eyaml?ref=master&private_token=" + os.environ["TOKEN"]
+            url = "https://gitlab.wifa.uni-leipzig.de:443/api/v4/projects/" + str(project.get("id")) + "/repository/files/swagger%2Eyaml?ref=master&private_token=" + os.environ["TOKEN"]
             swagger_file = requests.get(url)
             app.logger.info(url)
             app.logger.info(swagger_file.status_code)
             if swagger_file.status_code == 200:
                 db.db["swagger"].insert({
                     "id": project.get("id"),
-                    "swagger": base64.b64decode(swagger_file.text).decode()
+                    "swagger": base64.b64decode(swagger_file.text).decode("utf-8", "ignore")
                 })
                 app.logger.info("inserted swagger file of repo " + project.get("id"))
     except Exception as e:
@@ -74,3 +74,6 @@ if __name__ == '__main__':
         app.run(debug=True,host='0.0.0.0')
     else:
         app.run(debug=False, host='0.0.0.0')
+
+    get_swagger_files_from_repos()
+    get_swagger_files_from_repos_timer()
