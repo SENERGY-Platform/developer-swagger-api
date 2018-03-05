@@ -55,14 +55,18 @@ def get_swagger_files_from_repos():
             next_page = response.headers["X-Page"] != response.headers["X-Total-Pages"]
         for project in all_projects:
             app.logger.info("check project " + project.get("name"))
-            url = "https://gitlab.wifa.uni-leipzig.de:443/api/v4/projects/" + str(project.get("id")) + "/repository/files/swagger%2Eyaml?ref=master&private_token=" + os.environ["TOKEN"]
-            swagger_file = requests.get(url)
+            url = "https://gitlab.wifa.uni-leipzig.de:443/api/v4/projects/" + str(project.get("id")) + "/repository/files/swagger.yaml?ref=master&private_token=" + os.environ["TOKEN"]
+            request = requests.Request("GET", url)
+            prepared = request.prepare()
+            request.url.replace("swagger.yaml", "swagger%2Eyaml")
+            session = requests.Session()
+            response = session.send(prepared)
             app.logger.info(url)
-            app.logger.info(swagger_file.status_code)
-            if swagger_file.status_code == 200:
+            app.logger.info(response.status_code)
+            if response.status_code == 200:
                 db.db["swagger"].insert({
                     "id": project.get("id"),
-                    "swagger": base64.b64decode(swagger_file.text).decode("utf-8", "ignore")
+                    "swagger": base64.b64decode(response.text).decode("utf-8", "ignore")
                 })
                 app.logger.info("inserted swagger file of repo " + str(project.get("id")))
     except Exception as e:
