@@ -13,6 +13,8 @@ from threading import Timer
 import requests
 import base64
 from requests.auth import HTTPBasicAuth
+import yaml
+import json
 
 app = Flask(__name__)
 app.logger.addHandler(logging.StreamHandler())
@@ -65,7 +67,7 @@ def get_swagger_files_from_repos():
             response = session.send(prepared)
             if response.status_code == 200:
                 db.db["swagger"].insert({
-                    "swagger": response.text
+                    "swagger": json.dump(yaml.load(response.text))
                 })
                 app.logger.info("inserted swagger file of gitlab repo " + str(project.get("name")))
 
