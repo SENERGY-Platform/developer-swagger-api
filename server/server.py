@@ -59,9 +59,9 @@ def get_swagger_files_from_repos():
             request = requests.Request("GET", url)
             prepared = request.prepare()
             request.url.replace("swagger.yaml", "swagger%2Eyaml")
+            app.logger.info(request.url)
             session = requests.Session()
             response = session.send(prepared)
-            app.logger.info(url)
             app.logger.info(response.status_code)
             if response.status_code == 200:
                 db.db["swagger"].insert({
