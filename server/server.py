@@ -47,6 +47,7 @@ def get_swagger_files_from_repos():
         response = requests.get("http://gitlab.wifa.uni-leipzig.de/api/v4/projects?private_token=" + os.environ["TOKEN"]).json()
         app.logger.info("Got json file from api")
         for project in response:
+            app.logger.info("check project " + project.get("name"))
             swagger_file = requests.get("http://gitlab.wifa.uni-leipzig.de/api/v4/projects/" + str(project.get("id")) + "/repository/files/swagger%2Eyaml/raw?ref=master&private_token=" + os.environ["TOKEN"])
             app.logger.info(swagger_file.status_code)
             if swagger_file.status_code == 200:
