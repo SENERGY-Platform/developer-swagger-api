@@ -12,7 +12,9 @@ from prance import ResolvingParser
 class SwaggerAPI(Resource):
     def get(self):
         all_swagger = db.db["swagger"].find({})
+        all_swagger_with_permission = []
         for swagger in all_swagger:
+            all_swagger_with_permission.append(swagger.get("swagger"))
             server.app.logger.info(swagger)
         # TODO: compare with ladon with role path and method, new header field 
         payload = {
@@ -21,4 +23,4 @@ class SwaggerAPI(Resource):
             "resource": "path"
         }
         #response = requests.get(os.environ["LADON"], payload=payload).json()
-        return jsonify(list(map(lambda document: document.get("swagger"), all_swagger)))
+        return jsonify(all_swagger_with_permission)
