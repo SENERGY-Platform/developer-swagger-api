@@ -67,7 +67,7 @@ def get_swagger_files_from_repos():
                 db.db["swagger"].insert({
                     "swagger": response.text
                 })
-                app.logger.info("inserted swagger file of gitlab repo " + str(project.get("id")))
+                app.logger.info("inserted swagger file of gitlab repo " + str(project.get("name")))
 
         # TODO env variable
         kong_apis = requests.get("http://kong.kong.rancher.internal:8001/apis", auth=HTTPBasicAuth('sepl', 'sepl')).json()
