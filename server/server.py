@@ -62,7 +62,7 @@ def get_swagger_files_from_repos():
             if swagger_file.status_code == 200:
                 db.db["swagger"].insert({
                     "id": project.get("id"),
-                    "swagger": base64.b64decode(swagger_file.text)
+                    "swagger": base64.b64decode(swagger_file.text).decode()
                 })
                 app.logger.info("inserted swagger file of repo " + project.get("id"))
     except Exception as e:
