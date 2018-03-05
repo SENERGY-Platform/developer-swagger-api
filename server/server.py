@@ -48,6 +48,7 @@ def get_swagger_files_from_repos():
         app.logger.info("Got json file from api")
         for project in response:
             swagger_file = requests.get("http://gitlab.wifa.uni-leipzig.de/api/v4/projects/" + str(project.get("id")) + "/repository/files/swagger%2Eyaml?ref=master&private_token=" + os.environ["TOKEN"])
+            app.logger.info(swagger_file.status_code)
             if swagger_file.status_code == 200:
                 db.db["swagger"].insert({
                     "id": project.get("id"),
