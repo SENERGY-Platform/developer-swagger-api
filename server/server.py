@@ -12,6 +12,7 @@ from datetime import datetime
 from threading import Timer
 import requests
 import base64
+from requests.auth import HTTPBasicAuth
 
 app = Flask(__name__)
 app.logger.addHandler(logging.StreamHandler())
@@ -70,6 +71,11 @@ def get_swagger_files_from_repos():
                     "swagger": response.text
                 })
                 app.logger.info("inserted swagger file of repo " + str(project.get("id")))
+            else:
+                # TODO env variable
+                kong_apis = requests.get("http://kong.kong.rancher.internal:8001", auth=HTTPBasicAuth('sepl', 'sepl')).json()
+                app.logger.info(kong_apis)
+                
     except Exception as e:
         app.logger.error(e)
 
