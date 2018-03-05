@@ -50,7 +50,7 @@ def get_swagger_files_from_repos():
             swagger_file = requests.get("http://gitlab.wifa.uni-leipzig.de/api/v4/projects/" + str(project.get("id")) + "/repository/files/swagger%2E.yaml?ref=master&private_token=" + os.environ["TOKEN"])
             if swagger_file.status_code == 200:
                 db.db["swagger"].insert({
-                    "id": "path",
+                    "id": project.get("id"),
                     "swagger": swagger_file.text
                 })
     except Exception as e:

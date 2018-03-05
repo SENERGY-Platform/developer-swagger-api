@@ -13,6 +13,7 @@ class SwaggerAPI(Resource):
     def get(self):
         server.get_swagger_files_from_repos()
         all_swagger = db.db["swagger"].find({})
+        server.app.logger.info(all_swagger)
         # TODO: compare with ladon with role path and method, new header field 
         payload = {
             "subject": "role",
