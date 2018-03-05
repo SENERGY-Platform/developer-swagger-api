@@ -16,7 +16,7 @@ class SwaggerAPI(Resource):
         all_swagger_with_permission = []
         for swagger in all_swagger:
             # json load, otherwise the json string gets escaped with jsonify
-            all_swagger_with_permission.append(json.load(swagger.get("swagger")))
+            all_swagger_with_permission.append(json.loads(swagger.get("swagger")))
             server.app.logger.info(swagger)
         # TODO: compare with ladon with role path and method, new header field 
         payload = {
