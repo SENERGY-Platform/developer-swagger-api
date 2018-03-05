@@ -61,28 +61,24 @@ def get_swagger_files_from_repos():
             request = requests.Request("GET", url)
             prepared = request.prepare()
             prepared.url = prepared.url.replace("swagger.yaml", "swagger%2Eyaml")
-            app.logger.info(prepared.url)
             session = requests.Session()
             response = session.send(prepared)
-            app.logger.info(response.status_code)
             if response.status_code == 200:
                 db.db["swagger"].insert({
-                    "id": project.get("id"),
                     "swagger": response.text
                 })
-                app.logger.info("inserted swagger file of repo " + str(project.get("id")))
+                app.logger.info("inserted swagger file of gitlab repo " + str(project.get("id")))
 
         # TODO env variable
-            kong_apis = requests.get("http://kong.kong.rancher.internal:8001/apis", auth=HTTPBasicAuth('sepl', 'sepl')).json()
-            app.logger.info(kong_apis)
-            for api in kong_apis.get("data"):
-                response = requests.get("http://fgseitsrancher.wifa.intern.uni-leipzig.de:8000" + api.get("uris")[0] + "/doc")
-                if response.status_code == 200:
-                    db.db["swagger"].insert({
-                        "id": project.get("id"),
-                        "swagger": response.text
-                    })
-                    app.logger.info("inserted swagger file of repo " + str(project.get("id")))
+        kong_apis = requests.get("http://kong.kong.rancher.internal:8001/apis", auth=HTTPBasicAuth('sepl', 'sepl')).json()
+        app.logger.info(kong_apis)
+        for api in kong_apis.get("data"):
+            response = requests.get("http://fgseitsrancher.wifa.intern.uni-leipzig.de:8000" + api.get("uris")[0] + "/doc")
+            if response.status_code == 200:
+                db.db["swagger"].insert({
+                    "swagger": response.text
+                })
+                app.logger.info("inserted swagger file from documentation endpoint of service " + api.get("name"))
                 
                 
     except Exception as e:
