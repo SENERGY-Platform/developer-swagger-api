@@ -52,11 +52,11 @@ def get_swagger_files_from_repos():
             response = requests.get("http://gitlab.wifa.uni-leipzig.de/api/v4/projects?private_token=" + os.environ["TOKEN"] + "&page=" + response.headers["X-Next-Page"])
             all_projects = all_projects + response.json()
             next_page = response.headers["X-Page"] != response.headers["X-Total-Pages"]
-        app.logger.info(url)
         for project in all_projects:
             app.logger.info("check project " + project.get("name"))
             url = "http://gitlab.wifa.uni-leipzig.de/api/v4/projects/" + str(project.get("id")) + "/repository/files/swagger%2Eyaml/raw?ref=master&private_token=" + os.environ["TOKEN"]
             swagger_file = requests.get(url)
+            app.logger.info(url)
             app.logger.info(swagger_file.status_code)
             if swagger_file.status_code == 200:
                 db.db["swagger"].insert({
