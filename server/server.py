@@ -67,7 +67,7 @@ def get_swagger_files_from_repos():
             response = session.send(prepared)
             if response.status_code == 200:
                 db.db["swagger"].insert({
-                    "swagger": json.dump(yaml.load(response.text))
+                    "swagger": json.dumps(yaml.load(response.text))
                 })
                 app.logger.info("inserted swagger file of gitlab repo " + str(project.get("name")))
 
