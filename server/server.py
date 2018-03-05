@@ -71,10 +71,19 @@ def get_swagger_files_from_repos():
                     "swagger": response.text
                 })
                 app.logger.info("inserted swagger file of repo " + str(project.get("id")))
-            else:
-                # TODO env variable
-                kong_apis = requests.get("http://kong.kong.rancher.internal:8001", auth=HTTPBasicAuth('sepl', 'sepl')).json()
-                app.logger.info(kong_apis)
+
+        # TODO env variable
+            kong_apis = requests.get("http://kong.kong.rancher.internal:8001/apis", auth=HTTPBasicAuth('sepl', 'sepl')).json()
+            app.logger.info(kong_apis)
+            for api in kong_apis:
+                response = requests.get("/doc")
+                if response.status_code == 200:
+                    db.db["swagger"].insert({
+                        "id": project.get("id"),
+                        "swagger": response.text
+                    })
+                    app.logger.info("inserted swagger file of repo " + str(project.get("id")))
+                
                 
     except Exception as e:
         app.logger.error(e)
