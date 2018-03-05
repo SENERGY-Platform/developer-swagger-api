@@ -53,13 +53,14 @@ def get_swagger_files_from_repos():
             response = requests.get("https://gitlab.wifa.uni-leipzig.de/api/v4/projects?private_token=" + os.environ["TOKEN"] + "&page=" + response.headers["X-Next-Page"])
             all_projects = all_projects + response.json()
             next_page = response.headers["X-Page"] != response.headers["X-Total-Pages"]
+        
         for project in all_projects:
             app.logger.info("check project " + project.get("name"))
             url = "https://gitlab.wifa.uni-leipzig.de:443/api/v4/projects/" + str(project.get("id")) + "/repository/files/swagger.yaml?ref=master&private_token=" + os.environ["TOKEN"]
             request = requests.Request("GET", url)
             prepared = request.prepare()
-            request.url.replace("swagger.yaml", "swagger%2Eyaml")
-            app.logger.info(request.url)
+            prepared.url.replace("swagger.yaml", "swagger%2Eyaml")
+            app.logger.info(prepared.url)
             session = requests.Session()
             response = session.send(prepared)
             app.logger.info(response.status_code)
