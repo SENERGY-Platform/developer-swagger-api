@@ -45,12 +45,12 @@ def get_swagger_files_from_repos_timer():
 def get_swagger_files_from_repos():
     try:
         all_projects = []
-        response = requests.get("http://gitlab.wifa.uni-leipzig.de/api/v4/projects?private_token=" + os.environ["TOKEN"]).json()
-        all_projects = all_projects + response
+        response = requests.get("http://gitlab.wifa.uni-leipzig.de/api/v4/projects?private_token=" + os.environ["TOKEN"])
+        all_projects = all_projects + response.json()
         next_page = response.headers["X-Page"] != response.headers["X-Total-Pages"]
         while next_page:
-            response = requests.get("http://gitlab.wifa.uni-leipzig.de/api/v4/projects?private_token=" + os.environ["TOKEN"] + "&page=" + response.headers["X-Next-Page"]).json()
-            all_projects = all_projects + response
+            response = requests.get("http://gitlab.wifa.uni-leipzig.de/api/v4/projects?private_token=" + os.environ["TOKEN"] + "&page=" + response.headers["X-Next-Page"])
+            all_projects = all_projects + response.json()
             next_page = response.headers["X-Page"] != response.headers["X-Total-Pages"]
         
         for project in all_projects:
