@@ -59,7 +59,7 @@ def get_swagger_files_from_repos():
             url = "https://gitlab.wifa.uni-leipzig.de:443/api/v4/projects/" + str(project.get("id")) + "/repository/files/swagger.yaml/raw?ref=master&private_token=" + os.environ["TOKEN"]
             request = requests.Request("GET", url)
             prepared = request.prepare()
-            prepared.url.replace("swagger.yaml", "swagger%2Eyaml")
+            prepared.url = prepared.url.replace("swagger.yaml", "swagger%2Eyaml")
             app.logger.info(prepared.url)
             session = requests.Session()
             response = session.send(prepared)
