@@ -48,6 +48,7 @@ def get_swagger_files_from_repos_timer():
 
 def get_swagger_files_from_repos():
     try:
+        db.db["swagger"].remove({})
         all_projects = []
         response = requests.get("https://gitlab.wifa.uni-leipzig.de/api/v4/projects?private_token=" + os.environ["TOKEN"])
         all_projects = all_projects + response.json()
