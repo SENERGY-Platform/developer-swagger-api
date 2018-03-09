@@ -32,7 +32,7 @@ class SwaggerAPI(Resource):
                             ladon = "{url}/access".format(url=os.environ["LADON"])
                             response = requests.get(ladon, data=json.dumps(payload)).json()
                             if not response.get("Result"):
-                                del complete_swagger.paths.path.method
+                                del complete_swagger.get("paths")[path][method]
                                 # TODO if no method, then delete path
             all_swagger_with_permission.append(complete_swagger)
         return jsonify(all_swagger_with_permission)
