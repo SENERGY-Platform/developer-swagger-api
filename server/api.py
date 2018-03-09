@@ -37,8 +37,9 @@ class SwaggerAPI(Resource):
                             server.app.logger.info("Request Data: " + json.dumps(payload))
                             server.app.logger.info("Response Data: " + json.dumps(response))
                             if not response.get("Result"):
-                                server.app.logger.info(filtered_swagger.get("paths")[path][method])
+                                server.app.logger.info(filtered_swagger.get("paths")[path])
                                 del filtered_swagger.get("paths")[path][method]
                                 # TODO if no method, then delete path
+                                server.app.logger.info(filtered_swagger.get("paths")[path])
             all_swagger_with_permission.append(filtered_swagger)
         return jsonify(all_swagger_with_permission)
