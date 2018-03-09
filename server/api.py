@@ -26,10 +26,11 @@ class SwaggerAPI(Resource):
                 if path:
                     for method in complete_swagger.get("paths")[path]:
                         if method:
+                            transformed_path = (complete_swagger.get("basePath") + path).replace("/", ":")
                             payload = {
                                 "subject": user_id,
                                 "action": method.upper(),
-                                "resource":  complete_swagger.get("basePath") + path
+                                "resource":  "endpoints:" + transformed_path
                             }
                             ladon = "{url}/access".format(url=os.environ["LADON"])
                             response = requests.get(ladon, data=json.dumps(payload)).json()
@@ -37,9 +38,7 @@ class SwaggerAPI(Resource):
                             server.app.logger.info("Request Data: " + json.dumps(payload))
                             server.app.logger.info("Response Data: " + json.dumps(response))
                             if not response.get("Result"):
-                                server.app.logger.info(filtered_swagger.get("paths")[path])
                                 del filtered_swagger.get("paths")[path][method]
                                 # TODO if no method, then delete path
-                                server.app.logger.info(filtered_swagger.get("paths")[path])
             all_swagger_with_permission.append(filtered_swagger)
         return jsonify(all_swagger_with_permission)
