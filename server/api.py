@@ -21,7 +21,7 @@ class SwaggerAPI(Resource):
             complete_swagger = json.loads(swagger.get("swagger"))
             # copy() because otherwise both variables point to the same value
             filtered_swagger = copy.deepcopy(complete_swagger)
-"""
+            """
             for path in complete_swagger.get("paths"):
                 if path:
                     for method in complete_swagger.get("paths")[path]:
