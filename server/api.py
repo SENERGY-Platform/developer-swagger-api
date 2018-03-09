@@ -30,7 +30,7 @@ class SwaggerAPI(Resource):
                                 "resource": path
                             }
                             ladon = "{url}/access".format(url=os.environ["LADON"])
-                            response = requests.get(ladon, payload=json.dumps(payload)).json()
+                            response = requests.get(ladon, data=json.dumps(payload)).json()
                             if not response.get("Result"):
                                 del complete_swagger.paths.path.method
                                 # TODO if no method, then delete path
