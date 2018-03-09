@@ -18,6 +18,8 @@ class SwaggerAPI(Resource):
         for swagger in all_swagger:
             # json load, otherwise the json string gets escaped with jsonify
             complete_swagger = json.loads(swagger.get("swagger"))
+            filtered_swagger = complete_swagger
+
             server.app.logger.info(json.dumps(complete_swagger))
             for path in complete_swagger.get("paths"):
                 server.app.logger.info(json.dumps(path))
@@ -32,7 +34,7 @@ class SwaggerAPI(Resource):
                             ladon = "{url}/access".format(url=os.environ["LADON"])
                             response = requests.get(ladon, data=json.dumps(payload)).json()
                             if not response.get("Result"):
-                                del complete_swagger.get("paths")[path][method]
+                                del filtered_swagger.get("paths")[path][method]
                                 # TODO if no method, then delete path
-            all_swagger_with_permission.append(complete_swagger)
+            all_swagger_with_permission.append(filtered_swagger)
         return jsonify(all_swagger_with_permission)
