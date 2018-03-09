@@ -22,11 +22,11 @@ class SwaggerAPI(Resource):
             # copy() because otherwise both variables point to the same value
             filtered_swagger = copy.deepcopy(complete_swagger)
 
-            server.app.logger.info(json.dumps(complete_swagger))
             for path in complete_swagger.get("paths"):
                 server.app.logger.info(json.dumps(path))
                 if path:
                     for method in complete_swagger.get("paths")[path]:
+                        server.app.logger.info(json.dumps(method))
                         if method:
                             payload = {
                                 "subject": user_id,
