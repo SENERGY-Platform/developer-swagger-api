@@ -9,6 +9,7 @@ import server
 import logging
 from prance import ResolvingParser
 import json 
+import copy
 
 class SwaggerAPI(Resource):
     def get(self):
@@ -19,7 +20,7 @@ class SwaggerAPI(Resource):
             # json load, otherwise the json string gets escaped with jsonify
             complete_swagger = json.loads(swagger.get("swagger"))
             # copy() because otherwise both variables point to the same value
-            filtered_swagger = complete_swagger.copy()
+            filtered_swagger = copy.deepcopy(complete_swagger)
 
             server.app.logger.info(json.dumps(complete_swagger))
             for path in complete_swagger.get("paths"):
