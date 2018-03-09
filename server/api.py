@@ -18,7 +18,8 @@ class SwaggerAPI(Resource):
         for swagger in all_swagger:
             # json load, otherwise the json string gets escaped with jsonify
             complete_swagger = json.loads(swagger.get("swagger"))
-            filtered_swagger = complete_swagger
+            # copy() because otherwise both variables point to the same value
+            filtered_swagger = complete_swagger.copy()
 
             server.app.logger.info(json.dumps(complete_swagger))
             for path in complete_swagger.get("paths"):
