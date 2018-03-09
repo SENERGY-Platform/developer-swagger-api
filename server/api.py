@@ -30,7 +30,7 @@ class SwaggerAPI(Resource):
                             payload = {
                                 "subject": user_id,
                                 "action": method.upper(),
-                                "resource":  "endpoints:" + transformed_path
+                                "resource":  "endpoints" + transformed_path
                             }
                             ladon = "{url}/access".format(url=os.environ["LADON"])
                             response = requests.get(ladon, data=json.dumps(payload)).json()
