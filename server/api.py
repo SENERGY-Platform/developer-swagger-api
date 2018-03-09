@@ -18,17 +18,19 @@ class SwaggerAPI(Resource):
         for swagger in all_swagger:
             # json load, otherwise the json string gets escaped with jsonify
             complete_swagger = json.loads(swagger.get("swagger"))
-            for path in complete_swagger.paths:
-                for method in complete_swagger.paths.path:
-                    payload = {
-                        "subject": user_id,
-                        "action": method.upper(),
-                        "resource": path
-                    }
-                    ladon = "{url}/access".format(url=os.environ["LADON"])
-                    response = requests.get(ladon, payload=json.dumps(payload)).json()
-                    if not response.get("Result"):
-                        del complete_swagger.paths.path.method
-                        # TODO if no method, then delete path
+            for path in complete_swagger.get("paths"):
+                if path:
+                    for method in complete_swagger.paths.get("path"):
+                        if method:
+                            payload = {
+                                "subject": user_id,
+                                "action": method.upper(),
+                                "resource": path
+                            }
+                            ladon = "{url}/access".format(url=os.environ["LADON"])
+                            response = requests.get(ladon, payload=json.dumps(payload)).json()
+                            if not response.get("Result"):
+                                del complete_swagger.paths.path.method
+                                # TODO if no method, then delete path
             all_swagger_with_permission.append(complete_swagger)
         return jsonify(all_swagger_with_permission)
