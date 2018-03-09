@@ -21,7 +21,7 @@ class SwaggerAPI(Resource):
             complete_swagger = json.loads(swagger.get("swagger"))
             # copy() because otherwise both variables point to the same value
             filtered_swagger = copy.deepcopy(complete_swagger)
-
+"""
             for path in complete_swagger.get("paths"):
                 if path:
                     for method in complete_swagger.get("paths")[path]:
@@ -39,6 +39,6 @@ class SwaggerAPI(Resource):
                             server.app.logger.info("Response Data: " + json.dumps(response))
                             if not response.get("Result"):
                                 del filtered_swagger.get("paths")[path][method]
-                                # TODO if no method, then delete path
+                                # TODO if no method, then delete path"""
             all_swagger_with_permission.append(filtered_swagger)
         return jsonify(all_swagger_with_permission)
