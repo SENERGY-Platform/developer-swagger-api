@@ -22,7 +22,7 @@ class SwaggerAPI(Resource):
             for path in complete_swagger.get("paths"):
                 server.app.logger.info(json.dumps(path))
                 if path:
-                    for method in complete_swagger.paths.get("path"):
+                    for method in complete_swagger.paths[path].get("path"):
                         if method:
                             payload = {
                                 "subject": user_id,
