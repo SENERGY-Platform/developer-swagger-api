@@ -75,8 +75,9 @@ def get_swagger_files_from_repos():
         # TODO env variable
         kong_apis = requests.get("http://kong.kong.rancher.internal:8001/apis", auth=HTTPBasicAuth('sepl', 'sepl')).json()
         app.logger.info(kong_apis)
+ 
         for api in kong_apis.get("data"):
-            response = requests.get("http://fgseitsrancher.wifa.intern.uni-leipzig.de:8000" + api.get("uris")[0] + "/doc")
+            response = requests.get(api.get("upstream_url") + api.get("uris")[0] + "/doc")
             if response.status_code == 200:
                 db.db["swagger"].insert({
                     "swagger": response.text
