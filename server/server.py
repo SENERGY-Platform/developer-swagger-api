@@ -77,13 +77,15 @@ def get_swagger_files_from_repos():
         app.logger.info(kong_apis)
  
         for api in kong_apis.get("data"):
-            response = requests.get(api.get("upstream_url") + api.get("uris")[0] + "/doc")
-            if response.status_code == 200:
-                db.db["swagger"].insert({
-                    "swagger": response.text
-                })
-                app.logger.info("inserted swagger file from documentation endpoint of service " + api.get("name"))
-                
+            try:
+                response = requests.get(api.get("upstream_url") + api.get("uris")[0] + "/doc")
+                if response.status_code == 200:
+                    db.db["swagger"].insert({
+                        "swagger": response.text
+                    })
+                    app.logger.info("inserted swagger file from documentation endpoint of service " + api.get("name"))
+            except ConnectionError as e:
+                app.logger.error(e)
                 
     except Exception as e:
         app.logger.error(e)
