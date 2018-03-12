@@ -79,7 +79,7 @@ def get_swagger_files_from_repos():
         for api in kong_apis.get("data"):
             try:
                 app.logger.info(json.dumps(api))
-                response = requests.get(api.get("upstream_url") + api.get("uris")[0] + "/doc")
+                response = requests.get(api.get("upstream_url") + "/doc") # + api.get("uris")[0] not needed because apis get stripped 
                 if response.status_code == 200:
                     db.db["swagger"].insert({
                         "swagger": response.text
