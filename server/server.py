@@ -84,7 +84,7 @@ def get_swagger_files_from_repos():
                         "swagger": response.text
                     })
                     app.logger.info("inserted swagger file from documentation endpoint of service " + api.get("name"))
-            except ConnectionError as e:
+            except Exception as e:
                 app.logger.error(e)
                 
     except Exception as e:
