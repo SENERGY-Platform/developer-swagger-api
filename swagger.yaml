@@ -3,10 +3,10 @@ info:
   description: "This service manages the swagger specifications"
   version: "1.0.0"
   title: "Swagger"
-host: "fgseitsrancher.wifa.intern.uni-leipzig.de:8000"
+host: "sepl.infai.org:8088"
 basePath: "/"
 schemes:
-- "http"
+- "https"
 paths:
   /developer/swagger:
     get:

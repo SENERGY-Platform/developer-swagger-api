@@ -13,7 +13,6 @@ import copy
 
 class SwaggerAPI(Resource):
     def get(self):
-        user_id = request.headers.get("X-UserID")
         all_swagger = db.db["swagger"].find({})
         all_swagger_with_permission = []
         for swagger in all_swagger:
@@ -26,18 +25,24 @@ class SwaggerAPI(Resource):
                 if path:
                     for method in complete_swagger.get("paths")[path]:
                         if method:
-                            transformed_path = (complete_swagger.get("basePath") + path).replace("/", ":")
-                            payload = {
-                                "subject": user_id,
-                                "action": method.upper(),
-                                "resource":  "endpoints" + transformed_path
-                            }
-                            ladon = "{url}/access".format(url=os.environ["LADON"])
-                            response = requests.get(ladon, data=json.dumps(payload)).json()
-                            server.app.logger.info("check for authorization at ladon: ")
-                            server.app.logger.info("Request Data: " + json.dumps(payload))
-                            server.app.logger.info("Response Data: " + json.dumps(response))
-                            if not response.get("Result"):
+                            user_has_permission = False
+                            for role in json.loads(request.header.get("X-User-Roles")):
+                                transformed_path = (complete_swagger.get("basePath") + path).replace("/", ":")
+                                payload = {
+                                    "subject": user_id,
+                                    "action": method.upper(),
+                                    "resource":  "endpoints" + transformed_path
+                                }
+                                ladon = "{url}/access".format(url=os.environ["LADON"])
+                                response = requests.get(ladon, data=json.dumps(payload)).json()
+                                server.app.logger.info("check for authorization at ladon: ")
+                                server.app.logger.info("Request Data: " + json.dumps(payload))
+                                server.app.logger.info("Response Data: " + json.dumps(response))
+                                if response.get("Result"):
+                                    user_has_permission = True
+                                    break
+                            
+                            if !user_has_permission:
                                 del filtered_swagger.get("paths")[path][method]
                                 # TODO if no method, then delete path"""
             all_swagger_with_permission.append(filtered_swagger)
