@@ -5,3 +5,4 @@ requests
 flask-migrate
 prance
 pymongo
+flask-restful-swagger-2

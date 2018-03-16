@@ -12,6 +12,22 @@ import json
 import copy
 
 class SwaggerAPI(Resource):
+    @swagger.doc({
+        'tags': ['Get all swagger specifications'],
+        'description': '',
+        'responses': {
+            '200': {
+                'description': 'Return swagger specifications',
+                'schema': UserModel,
+                'examples': {
+                    'application/json': {
+                        'id': 1,
+                        'name': 'somebody'
+                    }
+                }
+            }
+        }
+    })
     def get(self):
         all_swagger = db.db["swagger"].find({})
         all_swagger_with_permission = []

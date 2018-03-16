@@ -15,17 +15,16 @@ import base64
 from requests.auth import HTTPBasicAuth
 import yaml
 import json
+from flask_restful_swagger_2 import Api
 
 app = Flask(__name__)
 app.logger.addHandler(logging.StreamHandler())
 app.logger.setLevel(logging.INFO)
-app_api = Api(app)
+app_api = Api(app, api_version='0.0', api_spec_url='/doc', host='sepl.infai.org:8088')
 app_api.add_resource(api.SwaggerAPI, '/developer/swagger')
 
 @app.after_request
 def after_request(response):
-    # This IF avoids the duplication of registry in the log,
-    # since that 500 is already logged via @app.errorhandler.
     if response.status_code != 500:
         ts = strftime('[%Y-%b-%d %H:%M]')
         app.logger.info('%s %s %s %s %s %s',
@@ -94,6 +93,7 @@ def get_swagger_files_from_repos():
 
 get_swagger_files_from_repos()
 get_swagger_files_from_repos_timer()
+
 
 if __name__ == '__main__':
     if os.environ["DEBUG"] == "true":

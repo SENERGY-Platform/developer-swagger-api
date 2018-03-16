@@ -3,7 +3,7 @@ info:
   description: "This service manages the swagger specifications. It stores all static and dynamically generated swagger specifications from the repositories and services."
   version: "1.0.0"
   title: "Swagger"
-host: "sepl.infai.org:8088"
+host: "api.sepl.infai.org"
 basePath: "/"
 schemes:
 - "https"
