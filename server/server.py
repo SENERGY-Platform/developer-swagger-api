@@ -76,7 +76,7 @@ def get_swagger_files_from_repos():
         kong_apis = getApisFromKong()
         app.logger.info(kong_apis)
  
-        for api in kong_apis.get("data"):
+        for api in kong_apis:
             try:
                 app.logger.info(json.dumps(api))
                 response = requests.get(api.get("upstream_url") + "/doc") # + api.get("uris")[0] not needed because apis get stripped 
@@ -94,8 +94,8 @@ def get_swagger_files_from_repos():
 
 def getApisFromKong():
     # todo env kong linken
-    response = requests.get("http://kong.kong.rancher.internal:8001/apis", auth=HTTPBasicAuth('sepl', 'sepl')).json()
-    return response
+    response = requests.get("http://kong.kong.rancher.internal:8001/apis", auth=HTTPBasicAuth('sepl', 'sepl'))
+    return response.json().get("data")
 
 get_swagger_files_from_repos()
 get_swagger_files_from_repos_timer()

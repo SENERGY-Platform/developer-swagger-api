@@ -30,8 +30,6 @@ class PublicSwaggerAPI(Resource):
         for swagger in all_swagger:
             # json load, otherwise the json string gets escaped with jsonify
             complete_swagger = json.loads(swagger.get("swagger"))
-            server.app.logger.info(public_apis)
-
             for api in public_apis:
                 if complete_swagger.get("basePath") == api.get("uris")[0]:
                     all_swagger_with_permission.append(complete_swagger)
