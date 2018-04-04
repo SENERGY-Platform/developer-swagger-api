@@ -4,11 +4,26 @@ info:
   version: "1.0.0"
   title: "Swagger"
 host: "api.sepl.infai.org"
-basePath: "/"
+basePath: "/swagger"
 schemes:
 - "https"
 paths:
-  /developer/swagger:
+  /all:
+    get:
+      tags:
+      - "Get all swagger specifications"
+      summary: ""
+      description: ""
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "Return swagger specifications"
+          schema: 
+            items: 
+              $ref: "#/definitions/Swagger" 
+            type: "array"
+  /public:
     get:
       tags:
       - "Get all swagger specifications"
