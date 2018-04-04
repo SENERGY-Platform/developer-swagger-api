@@ -4,7 +4,7 @@ info:
   version: "1.0.0"
   title: "Swagger"
 host: "api.sepl.infai.org"
-basePath: "/developer/swagger"
+basePath: "/swagger"
 schemes:
 - "https"
 paths:
