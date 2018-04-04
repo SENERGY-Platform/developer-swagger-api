@@ -15,3 +15,6 @@ pip install requirements.txt
 - LADON: internal URL to Ladon service 
 - DB_HOST
 - DB_PORT
+
+# Notes
+- if you want to re read the swagger files manually, just reload the service, it will delete all previous swagger files 

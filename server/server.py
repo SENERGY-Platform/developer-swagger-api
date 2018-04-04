@@ -21,7 +21,8 @@ app = Flask(__name__)
 app.logger.addHandler(logging.StreamHandler())
 app.logger.setLevel(logging.INFO)
 app_api = Api(app, api_version='0.0', api_spec_url='/doc', host='sepl.infai.org:8088')
-app_api.add_resource(api.SwaggerAPI, '/developer/swagger')
+app_api.add_resource(api.AllSwaggerAPI, '/all')
+app_api.add_resource(api.PublicSwaggerAPI, '/public')
 
 @app.after_request
 def after_request(response):
@@ -72,7 +73,7 @@ def get_swagger_files_from_repos():
                 app.logger.info("inserted swagger file of gitlab repo " + str(project.get("name")))
 
         # TODO env variable
-        kong_apis = requests.get("http://kong.kong.rancher.internal:8001/apis", auth=HTTPBasicAuth('sepl', 'sepl')).json()
+        kong_apis = getApisFromKong()
         app.logger.info(kong_apis)
  
         for api in kong_apis.get("data"):
@@ -90,6 +91,11 @@ def get_swagger_files_from_repos():
                 
     except Exception as e:
         app.logger.error(e)
+
+def getApisFromKong():
+    # todo env kong linken
+    response = requests.get("http://kong.kong.rancher.internal:8001/apis", auth=HTTPBasicAuth('sepl', 'sepl')).json()
+    return response
 
 get_swagger_files_from_repos()
 get_swagger_files_from_repos_timer()

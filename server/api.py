@@ -11,32 +11,36 @@ from prance import ResolvingParser
 import json 
 import copy
 
-class SwaggerAPI(Resource):
-    @swagger.doc({
-        'tags': ['Get all swagger specifications'],
-        'description': '',
-        'responses': {
-            '200': {
-                'description': 'Return swagger specifications',
-                'schema': UserModel,
-                'examples': {
-                    'application/json': {
-                        'id': 1,
-                        'name': 'somebody'
-                    }
-                }
-            }
-        }
-    })
+class AllSwaggerAPI(Resource):
     def get(self):
         all_swagger = db.db["swagger"].find({})
         all_swagger_with_permission = []
         for swagger in all_swagger:
+            complete_swagger = json.loads(swagger.get("swagger"))
+            all_swagger_with_permission.append(complete_swagger)
+        return jsonify(all_swagger_with_permission)
+
+class PublicSwaggerAPI(Resource):
+    def get(self):
+        all_swagger = db.db["swagger"].find({})
+        all_swagger_with_permission = []
+        public_apis = server.getApisFromKong()
+# todo /swagger/all für admin rolle 
+# /swagger/public für devloper rolle
+# /developer api anpassen immer mit strip uri damit base url da ist 
+# user darf nichts auf /developer
+# /developer/clients -> dann strip -> dann /client /clients 
+# /developer/swagger -> dann strip -> /all /public
+        for swagger in all_swagger:
             # json load, otherwise the json string gets escaped with jsonify
             complete_swagger = json.loads(swagger.get("swagger"))
             # copy() because otherwise both variables point to the same value
-            filtered_swagger = copy.deepcopy(complete_swagger)
-            """
+            for api in public_apis:
+                if complete_swagger.get("basePath") == api.get("uris")[0]:
+                    all_swagger_with_permission.append(complete_swagger)
+        return jsonify(all_swagger_with_permission)
+"""
+filter with roles
             for path in complete_swagger.get("paths"):
                 if path:
                     for method in complete_swagger.get("paths")[path]:
@@ -60,6 +64,5 @@ class SwaggerAPI(Resource):
                             
                             if !user_has_permission:
                                 del filtered_swagger.get("paths")[path][method]
-                                # TODO if no method, then delete path"""
-            all_swagger_with_permission.append(filtered_swagger)
-        return jsonify(all_swagger_with_permission)
+                                # TODO if no method, then delete path
+"""
