@@ -27,15 +27,12 @@ class PublicSwaggerAPI(Resource):
         public_apis = server.getApisFromKong()
 # todo /swagger/all für admin rolle 
 # /swagger/public für devloper rolle
-# /developer api anpassen immer mit strip uri damit base url da ist 
-# user darf nichts auf /developer
-# /developer/clients -> dann strip -> dann /client /clients 
-# /developer/swagger -> dann strip -> /all /public
         for swagger in all_swagger:
             # json load, otherwise the json string gets escaped with jsonify
             complete_swagger = json.loads(swagger.get("swagger"))
-            # copy() because otherwise both variables point to the same value
             for api in public_apis:
+                server.app.logger.info(complete_swagger)
+                server.app.logger.info(api)
                 if complete_swagger.get("basePath") == api.get("uris")[0]:
                     all_swagger_with_permission.append(complete_swagger)
         return jsonify(all_swagger_with_permission)
