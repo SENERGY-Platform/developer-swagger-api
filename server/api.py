@@ -32,8 +32,8 @@ class PublicSwaggerAPI(Resource):
                 for api in public_apis:
                     if complete_swagger.get("basePath") == api.get("uris")[0]:
                         all_swagger_with_permission.append(complete_swagger)
-                    else:
-                        all_swagger_with_permission.append(complete_swagger)
+            else:
+                all_swagger_with_permission.append(complete_swagger)
 
         return jsonify(all_swagger_with_permission)
 """
