@@ -25,14 +25,16 @@ class PublicSwaggerAPI(Resource):
         all_swagger = db.db["swagger"].find({})
         all_swagger_with_permission = []
         public_apis = server.getApisFromKong()
-# todo /swagger/all für admin rolle 
-# /swagger/public für devloper rolle
         for swagger in all_swagger:
             # json load, otherwise the json string gets escaped with jsonify
             complete_swagger = json.loads(swagger.get("swagger"))
-            for api in public_apis:
-                if complete_swagger.get("basePath") == api.get("uris")[0]:
-                    all_swagger_with_permission.append(complete_swagger)
+            if complete_swagger.get("host") == "api.sepl.infai.org":
+                for api in public_apis:
+                    if complete_swagger.get("basePath") == api.get("uris")[0]:
+                        all_swagger_with_permission.append(complete_swagger)
+                    else:
+                        all_swagger_with_permission.append(complete_swagger)
+
         return jsonify(all_swagger_with_permission)
 """
 filter with roles
