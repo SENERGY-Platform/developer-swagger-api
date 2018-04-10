@@ -71,5 +71,5 @@ class SwaggerAPI(Resource):
                     transformed_swagger = transform_swagger_permission(complete_swagger, roles)
                     filtered_swagger.append(transformed_swagger)
 
-                return jsonify(filtered_swagger)
+            return jsonify(filtered_swagger)
 
