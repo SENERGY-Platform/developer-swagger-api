@@ -21,8 +21,7 @@ app = Flask(__name__)
 app.logger.addHandler(logging.StreamHandler())
 app.logger.setLevel(logging.INFO)
 app_api = Api(app, api_version='0.0', api_spec_url='/doc', host='sepl.infai.org:8088')
-app_api.add_resource(api.AllSwaggerAPI, '/all')
-app_api.add_resource(api.PublicSwaggerAPI, '/public')
+app_api.add_resource(api.SwaggerAPI, '/')
 
 @app.after_request
 def after_request(response):
