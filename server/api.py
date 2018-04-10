@@ -14,7 +14,8 @@ import jwt
 
 class SwaggerAPI(Resource):
     def get(self):
-        roles = jwt.decode(encoded, verify=False)
+        server.app.logger.info(request.headers.get("Authorization"))
+        roles = jwt.decode(request.headers.get("Authorization").split(" ")[1], verify=False)
         server.app.logger.info(roles)
         all_swagger = db.db["swagger"].find({})
         all_swagger_with_permission = []
