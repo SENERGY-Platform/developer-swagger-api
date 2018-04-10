@@ -12,7 +12,7 @@ import json
 import copy
 import jwt
 
-def transform_swagger_permission(swagger):
+def transform_swagger_permission(swagger, roles):
     filtered_swagger = copy.deepcopy(swagger)
     # Remove Methods and path were the role has no permissions
     for path in swagger.get("paths"):
@@ -62,10 +62,11 @@ class SwaggerAPI(Resource):
                     for api in public_apis:
                         if complete_swagger.get("basePath") == api.get("uris")[0]:
                             transformed_swagger = transform_swagger_permission(complete_swagger)
-                            filtered_swagger.append(transformed_swagger)
+                            filtered_swagger.append(transformed_swagger, roles)
                 else:
                     # APIs is not in KONG, therefor accessible
-                    filtered_swagger.append(complete_swagger)
+                    transformed_swagger = transform_swagger_permission(complete_swagger)
+                    filtered_swagger.append(transformed_swagger, roles)
 
                 return jsonify(filtered_swagger)
 
