@@ -14,16 +14,18 @@ import jwt
 
 class SwaggerAPI(Resource):
     def get(self):
-        server.app.logger.info(request.headers.get("Authorization"))
-        roles = jwt.decode(request.headers.get("Authorization").split(" ")[1], verify=False)
-        server.app.logger.info(roles)
+        token = jwt.decode(request.headers.get("Authorization").split(" ")[1], verify=False)
+        roles = token.get("realm_access")
+        if roles:
+            roles = roles.get("roles")
+
         all_swagger = db.db["swagger"].find({})
         all_swagger_with_permission = []
         public_apis = server.getApisFromKong()
         for swagger in all_swagger:
             # json load, otherwise the json string gets escaped with jsonify
             complete_swagger = json.loads(swagger.get("swagger"))
-            if role == "admin":
+            if "admin" in roles:
                 all_swagger_with_permission.append(complete_swagger)
             else:
                 # Check if API is public accessible
