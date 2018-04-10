@@ -61,12 +61,12 @@ class SwaggerAPI(Resource):
                 if complete_swagger.get("host") == "api.sepl.infai.org": 
                     for api in public_apis:
                         if complete_swagger.get("basePath") == api.get("uris")[0]:
-                            transformed_swagger = transform_swagger_permission(complete_swagger)
-                            filtered_swagger.append(transformed_swagger, roles)
+                            transformed_swagger = transform_swagger_permission(complete_swagger, roles)
+                            filtered_swagger.append(transformed_swagger)
                 else:
                     # APIs is not in KONG, therefor accessible
-                    transformed_swagger = transform_swagger_permission(complete_swagger)
-                    filtered_swagger.append(transformed_swagger, roles)
+                    transformed_swagger = transform_swagger_permission(complete_swagger, roles)
+                    filtered_swagger.append(transformed_swagger)
 
                 return jsonify(filtered_swagger)
 
