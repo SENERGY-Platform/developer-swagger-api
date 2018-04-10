@@ -47,7 +47,7 @@ class SwaggerAPI(Resource):
                                 for role in roles:
                                     transformed_path = (complete_swagger.get("basePath") + path).replace("/", ":")
                                     payload = {
-                                        "subject": user_id,
+                                        "subject": role,
                                         "action": method.upper(),
                                         "resource":  "endpoints" + transformed_path
                                     }
