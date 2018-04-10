@@ -57,6 +57,7 @@ class SwaggerAPI(Resource):
             for swagger in all_swagger:
                 # json load, otherwise the json string gets escaped with jsonify
                 complete_swagger = json.loads(swagger.get("swagger"))
+                server.app.logger.info(complete_swagger)
                 # Check if API is public accessible
                 if complete_swagger.get("host") == "api.sepl.infai.org": 
                     for api in public_apis:
