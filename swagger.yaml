@@ -8,25 +8,10 @@ basePath: "/swagger"
 schemes:
 - "https"
 paths:
-  /all:
+  /:
     get:
       tags:
-      - "Get all swagger specifications"
-      summary: ""
-      description: ""
-      produces:
-      - "application/json"
-      responses:
-        200:
-          description: "Return swagger specifications"
-          schema: 
-            items: 
-              $ref: "#/definitions/Swagger" 
-            type: "array"
-  /public:
-    get:
-      tags:
-      - "Get all swagger specifications"
+      - "Get all swagger specifications filtered by your permissions"
       summary: ""
       description: ""
       produces:
