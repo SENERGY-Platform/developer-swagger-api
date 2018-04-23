@@ -64,7 +64,7 @@ class SwaggerAPI(Resource):
                         server.app.logger.info(complete_swagger.get("basePath"))
                         server.app.logger.info(api.get("uris")[0])
                         if complete_swagger.get("basePath") == api.get("uris")[0]:
-                            transformed_swagger = transform_swagger_permission(complete_swagger, roles)
+                            transformed_swagger = transform_swagger_permission(complete_swagger, ["admin"])
                             filtered_swagger.append(transformed_swagger)
                 else:
                     # APIs is not in KONG, therefor accessible
