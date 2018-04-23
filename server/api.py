@@ -68,7 +68,7 @@ class SwaggerAPI(Resource):
                             filtered_swagger.append(transformed_swagger)
                 else:
                     # APIs is not in KONG, therefor accessible
-                    transformed_swagger = transform_swagger_permission(complete_swagger, roles)
+                    transformed_swagger = transform_swagger_permission(complete_swagger, ["admin"])
                     filtered_swagger.append(transformed_swagger)
 
             return jsonify([json.loads(swagger.get("swagger")) for swagger in all_swagger])
