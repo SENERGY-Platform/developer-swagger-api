@@ -58,9 +58,8 @@ class SwaggerAPI(Resource):
                 complete_swagger = None
                 try:
                     complete_swagger = json.loads(swagger.get("swagger"))
-                except Exception as e:
-                    server.app.logger.info(swagger.get("swagger"))
-                    server.app.logger.error(e)
+                except ValueError as e:
+                    server.app.logger.info(e)
 
                 if complete_swagger:
                     filtered_swagger = []

@@ -81,9 +81,13 @@ def get_swagger_files_from_repos():
             app.logger.info(json.dumps(api))
             response = requests.get(api.get("upstream_url") + "/doc") # + api.get("uris")[0] not needed because apis get stripped 
             if response.status_code == 200:
-                db.db["swagger"].insert({
-                    "swagger": response.text
-                })
+                try: 
+                    parsed = json.loads(response.text)
+                    db.db["swagger"].insert({
+                        "swagger": response.text
+                    })
+                except ValueError as e:
+                    app.logger.info("document from /doc endpoint is not json, therefore dont get loaded")
             app.logger.info("inserted swagger file from documentation endpoint of service " + api.get("name"))
         except Exception as e:
             app.logger.error(e)
