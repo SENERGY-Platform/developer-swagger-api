@@ -53,23 +53,30 @@ class SwaggerAPI(Resource):
         if "admin" in roles:
             return jsonify([json.loads(swagger.get("swagger")) for swagger in all_swagger])
         else:
-            filtered_swagger = []
             for swagger in all_swagger:
                 # json load, otherwise the json string gets escaped with jsonify
-                complete_swagger = json.loads(swagger.get("swagger"))
-                server.app.logger.info(complete_swagger)
-                # Check if API is public accessible
-                if complete_swagger.get("host") == "api.sepl.infai.org": 
-                    for api in public_apis:
-                        server.app.logger.info(complete_swagger.get("basePath"))
-                        server.app.logger.info(api.get("uris")[0])
-                        if complete_swagger.get("basePath") == api.get("uris")[0]:
-                            transformed_swagger = transform_swagger_permission(complete_swagger, roles)
-                            filtered_swagger.append(transformed_swagger)
+                complete_swagger = None
+                try:
+                    complete_swagger = json.loads(swagger.get("swagger"))
+                except Exception as e:
+                    server.app.logger.error(e)
+                if complete_swagger:
+                    filtered_swagger = []
+                    server.app.logger.info(complete_swagger)
+                    # Check if API is public accessible
+                    if complete_swagger.get("host") == "api.sepl.infai.org": 
+                        for api in public_apis:
+                            server.app.logger.info(complete_swagger.get("basePath"))
+                            server.app.logger.info(api.get("uris")[0])
+                            if complete_swagger.get("basePath") == api.get("uris")[0]:
+                                transformed_swagger = transform_swagger_permission(complete_swagger, roles)
+                                filtered_swagger.append(transformed_swagger)
+                    else:
+                        # APIs is not in KONG, therefor accessible
+                        transformed_swagger = transform_swagger_permission(complete_swagger, ["admin"])
+                        filtered_swagger.append(transformed_swagger)
+                        return jsonify(filtered_swagger)
                 else:
-                    # APIs is not in KONG, therefor accessible
-                    transformed_swagger = transform_swagger_permission(complete_swagger, ["admin"])
-                    filtered_swagger.append(transformed_swagger)
+                    return jsonify({"error": "swagger file could not be parsed to json"})
 
-            return jsonify(filtered_swagger)
 
