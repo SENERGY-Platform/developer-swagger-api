@@ -51,10 +51,10 @@ class SwaggerAPI(Resource):
         all_swagger = db.db["swagger"].find({})
         public_apis = server.getApisFromKong()
         if "admin" in roles:
-            app.logger.info("user role is admin -> return all")
+            server.app.logger.info("user role is admin -> return all")
             return jsonify([json.loads(swagger.get("swagger")) for swagger in all_swagger])
         else:
-            app.logger.info("user role is not admin -> remove paths from swagger where user role does not have access")
+            server.app.logger.info("user role is not admin -> remove paths from swagger where user role does not have access")
             filtered_swagger = []
             for swagger in all_swagger:
                 # json load, otherwise the json string gets escaped with jsonify
@@ -65,7 +65,7 @@ class SwaggerAPI(Resource):
                     server.app.logger.info(e)
 
                 if complete_swagger:
-                    app.logger.info("swagger file was parsed to json")
+                    server.app.logger.info("swagger file was parsed to json")
                     # Check if API is public accessible
                     if complete_swagger.get("host") == "api.sepl.infai.org": 
                         for api in public_apis:
