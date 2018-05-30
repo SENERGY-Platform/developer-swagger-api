@@ -23,8 +23,6 @@ app.logger.setLevel(logging.INFO)
 app_api = Api(app, api_version='0.0', api_spec_url='/doc', host='sepl.infai.org:8088')
 app_api.add_resource(api.SwaggerAPI, '/')
 
-
-
 @app.after_request
 def after_request(response):
     if response.status_code != 500:
@@ -98,7 +96,6 @@ def getApisFromKong():
 
 get_swagger_files_from_repos()
 get_swagger_files_from_repos_timer()
-
 
 if __name__ == '__main__':
     if os.environ["DEBUG"] == "true":
