@@ -60,6 +60,7 @@ class SwaggerAPI(Resource):
                     complete_swagger = json.loads(swagger.get("swagger"))
                 except Exception as e:
                     server.app.logger.error(e)
+
                 if complete_swagger:
                     filtered_swagger = []
                     server.app.logger.info(complete_swagger)
@@ -75,8 +76,6 @@ class SwaggerAPI(Resource):
                         # APIs is not in KONG, therefor accessible
                         transformed_swagger = transform_swagger_permission(complete_swagger, ["admin"])
                         filtered_swagger.append(transformed_swagger)
-                        return jsonify(filtered_swagger)
-                else:
-                    return jsonify({"error": "swagger file could not be parsed to json"})
+            return jsonify(filtered_swagger)
 
 
