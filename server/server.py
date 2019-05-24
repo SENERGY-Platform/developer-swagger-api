@@ -1,26 +1,18 @@
 from flask import Flask,request
-from flask_sqlalchemy import SQLAlchemy
 import os
-from flask_restful import Api
-import db 
-from flask_migrate import Migrate
-import api 
+import db
+import api
 import logging
 from time import strftime
-import traceback
-from datetime import datetime
-from threading import Timer
 import requests
-import base64
 from requests.auth import HTTPBasicAuth
-import yaml
 import json
 from flask_restful_swagger_2 import Api
 
 app = Flask(__name__)
 app.logger.addHandler(logging.StreamHandler())
 app.logger.setLevel(logging.INFO)
-app_api = Api(app, api_version='0.0', api_spec_url='/doc', host='sepl.infai.org:8088')
+app_api = Api(app, api_version='0.0', api_spec_url='/doc', host='0.0.0.0:8088')
 app_api.add_resource(api.SwaggerAPI, '/')
 
 @app.after_request
@@ -37,42 +29,10 @@ def after_request(response):
                       )
     return response
 
-def get_swagger_files_from_repos_timer():
-    x=datetime.today()
-    y=x.replace(day=x.day+1, hour=1, minute=0, second=0, microsecond=0)
-    delta_t=y-x
-    secs=delta_t.seconds+1
-    t = Timer(secs, get_swagger_files_from_repos)
-    t.start()
 
-def get_swagger_files_from_repos():
+
+def load_doc():
     db.db["swagger"].remove({})
-    all_projects = []
-    response = requests.get("https://gitlab.wifa.uni-leipzig.de/api/v4/projects?private_token=" + os.environ["TOKEN"])
-    all_projects = all_projects + response.json()
-    next_page = response.headers["X-Page"] != response.headers["X-Total-Pages"]
-    while next_page:
-        response = requests.get("https://gitlab.wifa.uni-leipzig.de/api/v4/projects?private_token=" + os.environ["TOKEN"] + "&page=" + response.headers["X-Next-Page"])
-        all_projects = all_projects + response.json()
-        next_page = response.headers["X-Page"] != response.headers["X-Total-Pages"]
-        
-    for project in all_projects:
-        app.logger.info("check project " + project.get("name"))
-        url = "https://gitlab.wifa.uni-leipzig.de/api/v4/projects/" + str(project.get("id")) + "/repository/files/swagger.yaml/raw?ref=master&private_token=" + os.environ["TOKEN"]
-        request = requests.Request("GET", url)
-        prepared = request.prepare()
-        prepared.url = prepared.url.replace("swagger.yaml", "swagger%2Eyaml")
-        session = requests.Session()
-        response = session.send(prepared)
-        if response.status_code == 200:
-            try:
-                db.db["swagger"].insert({
-                    "swagger": json.dumps(yaml.load(response.text))
-                })
-                app.logger.info("inserted swagger file of gitlab repo " + str(project.get("name")))
-            except Exception as e:
-                app.logger.error(e)
-    # TODO env variable
     kong_apis = getApisFromKong()
     app.logger.info(kong_apis)
  
@@ -82,7 +42,7 @@ def get_swagger_files_from_repos():
             response = requests.get(api.get("upstream_url") + "/doc") # + api.get("uris")[0] not needed because apis get stripped 
             if response.status_code == 200:
                 try: 
-                    parsed = json.loads(response.text)
+                    json.loads(response.text)
                     db.db["swagger"].insert({
                         "swagger": response.text
                     })
@@ -94,12 +54,10 @@ def get_swagger_files_from_repos():
             continue
 
 def getApisFromKong():
-    # todo env kong linken
-    response = requests.get("http://kong.kong.rancher.internal:8001/apis", auth=HTTPBasicAuth('sepl', 'sepl'))
+    response = requests.get(os.environ["KONG_INTERNAL_URL"], auth=HTTPBasicAuth(os.environ["KONG_INTERNAL_BASIC_USER"], os.environ["KONG_INTERNAL_BASIC_PW"]))
     return response.json().get("data")
 
-get_swagger_files_from_repos()
-get_swagger_files_from_repos_timer()
+load_doc()
 
 if __name__ == '__main__':
     if os.environ["DEBUG"] == "true":

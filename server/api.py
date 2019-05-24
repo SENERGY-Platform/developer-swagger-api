@@ -1,14 +1,10 @@
-import schemas 
 import db
-import json
 import requests
 from flask import request, jsonify
 from flask_restful import Resource
 import os 
 import server
-import logging
-from prance import ResolvingParser
-import json 
+import json
 import copy
 import jwt
 
@@ -67,7 +63,7 @@ class SwaggerAPI(Resource):
                 if complete_swagger:
                     server.app.logger.info("swagger file was parsed to json")
                     # Check if API is public accessible
-                    if complete_swagger.get("host") == "api.sepl.infai.org": 
+                    if complete_swagger.get("host") == os.environ["KONG_HOST]"]:
                         for api in public_apis:
                             if complete_swagger.get("basePath") == api.get("uris")[0]:
                                 transformed_swagger = transform_swagger_permission(complete_swagger, roles)
