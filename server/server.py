@@ -51,7 +51,7 @@ def load_doc():
                 except ValueError as e:
                     app.logger.info("document from" + api.get("name") +" /doc endpoint is not json, therefore dont get loaded")
             else:
-                app.logger.info(api.get("name") + " responded with " + response.status_code + ". No documentation added.")
+                app.logger.info(api.get("name") + " responded with " + str(response.status_code) + ". No documentation added.")
         except Exception as e:
             app.logger.error(e)
             continue
