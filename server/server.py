@@ -47,9 +47,11 @@ def load_doc():
                     db.db["swagger"].insert({
                         "swagger": response.text
                     })
+                    app.logger.info("inserted swagger file from documentation endpoint of service " + api.get("name"))
                 except ValueError as e:
-                    app.logger.info("document from /doc endpoint is not json, therefore dont get loaded")
-            app.logger.info("inserted swagger file from documentation endpoint of service " + api.get("name"))
+                    app.logger.info("document from" + api.get("name") +" /doc endpoint is not json, therefore dont get loaded")
+            else:
+                app.logger.info(api.get("name") + " responded with " + response.status_code + ". No documentation added.")
         except Exception as e:
             app.logger.error(e)
             continue
