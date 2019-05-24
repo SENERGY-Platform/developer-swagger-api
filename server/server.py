@@ -8,6 +8,7 @@ import requests
 from requests.auth import HTTPBasicAuth
 import json
 from flask_restful_swagger_2 import Api
+from threading import Timer
 
 app = Flask(__name__)
 app.logger.addHandler(logging.StreamHandler())
@@ -52,6 +53,7 @@ def load_doc():
         except Exception as e:
             app.logger.error(e)
             continue
+    Timer(3600.0, load_doc).start()    #reruns function every hour
 
 def getApisFromKong():
     response = requests.get(os.environ["KONG_INTERNAL_URL"], auth=HTTPBasicAuth(os.environ["KONG_INTERNAL_BASIC_USER"], os.environ["KONG_INTERNAL_BASIC_PW"]))
