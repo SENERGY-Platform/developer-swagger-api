@@ -42,10 +42,11 @@ def load_doc():
             app.logger.info(json.dumps(api))
             response = requests.get(api.get("upstream_url") + "/doc") # + api.get("uris")[0] not needed because apis get stripped 
             if response.status_code == 200:
-                try: 
-                    json.loads(response.text)
+                try:
+                    definition = response.text.replace("\"basePath\": \"/\"", "\"basePath\": \""+os.environ["KONG_HOST"]+api.get("uris")[0]+"/\"")
+                    json.loads(definition)
                     db.db["swagger"].insert({
-                        "swagger": response.text
+                        "swagger": definition
                     })
                     app.logger.info("inserted swagger file from documentation endpoint of service " + api.get("name"))
                 except ValueError as e:
