@@ -13,7 +13,7 @@ from threading import Timer
 app = Flask(__name__)
 app.logger.addHandler(logging.StreamHandler())
 app.logger.setLevel(logging.INFO)
-app_api = Api(app, api_version='0.0', api_spec_url='/doc', host=os.environ['KONG_HOST'])
+app_api = Api(app, api_version='0.0', api_spec_url='/doc')
 app_api.add_resource(api.SwaggerAPI, '/')
 
 @app.after_request
@@ -43,7 +43,11 @@ def load_doc():
             response = requests.get(api.get("upstream_url") + "/doc") # + api.get("uris")[0] not needed because apis get stripped 
             if response.status_code == 200:
                 try:
+                    #if entry contains empty basepath, replace with basePath from Kong
                     definition = response.text.replace("\"basePath\": \"/\"", "\"basePath\": \""+api.get("uris")[0]+"/\"")
+                    if definition.find(sub='host') == -1:
+                        #if entry contains no host, set KONG_HOST
+                        definition = definition.replace("\"swagger\": \"2.0\",", "\"swagger\": \"2.0\",\n\"host\": \""+os.environ['KONG_HOST']+"\",")
                     json.loads(definition)
                     db.db["swagger"].insert({
                         "swagger": definition
