@@ -45,7 +45,7 @@ def load_doc():
                 try:
                     #if entry contains empty basepath, replace with basePath from Kong
                     definition = response.text.replace("\"basePath\": \"/\"", "\"basePath\": \""+api.get("uris")[0]+"/\"")
-                    if definition.find(sub='host') == -1:
+                    if definition.find('host') == -1:
                         #if entry contains no host, set KONG_HOST
                         definition = definition.replace("\"swagger\": \"2.0\",", "\"swagger\": \"2.0\",\n\"host\": \""+os.environ['KONG_HOST']+"\",")
                     json.loads(definition)
