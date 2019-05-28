@@ -48,6 +48,9 @@ def load_doc():
                     if definition.find('host') == -1:
                         #if entry contains no host, set KONG_HOST
                         definition = definition.replace("\"swagger\": \"2.0\",", "\"swagger\": \"2.0\",\n\"host\": \""+os.environ['KONG_HOST']+"\",")
+                    if definition.find('schemes') == -1:
+                        #if entry containes no schemes, add http/https
+                        definition = definition.replace("\"swagger\": \"2.0\",", "\"swagger\": \"2.0\",\n\"schemes\": \"[\"https\", \"http\"],")
                     json.loads(definition)
                     db.db["swagger"].insert({
                         "swagger": definition
