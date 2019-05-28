@@ -17,7 +17,6 @@ pip install requirements.txt
 - KONG_INTERNAL_URL (internally available kong url, ends with /api)
 - KONG_INTERNAL_BASIC_USER (username for basic auth)
 - KONG_INTERNAL_BASIC_PW (password for basic auth)
-- API_HOST
 
 
 # Notes
