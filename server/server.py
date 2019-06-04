@@ -66,7 +66,13 @@ def load_doc():
     Timer(3600.0, load_doc).start()    #reruns function every hour
 
 def getApisFromKong():
-    response = requests.get(os.environ["KONG_INTERNAL_URL"], auth=HTTPBasicAuth(os.environ["KONG_INTERNAL_BASIC_USER"], os.environ["KONG_INTERNAL_BASIC_PW"]))
+    try:
+        user = os.environ["KONG_INTERNAL_BASIC_USER"]
+        pw = os.environ["KONG_INTERNAL_BASIC_PW"]
+        response = requests.get(os.environ["KONG_INTERNAL_URL"], auth=HTTPBasicAuth(user, pw))
+    except KeyError:
+        print('Could not load user or password from environment variables. Attempting to contact Kong with BasicAuth.')
+        response = requests.get(os.environ["KONG_INTERNAL_URL"])
     return response.json().get("data")
 
 load_doc()
