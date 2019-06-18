@@ -71,7 +71,7 @@ def getApisFromKong():
         pw = os.environ["KONG_INTERNAL_BASIC_PW"]
         response = requests.get(os.environ["KONG_INTERNAL_URL"], auth=HTTPBasicAuth(user, pw))
     except KeyError:
-        print('Could not load user or password from environment variables. Attempting to contact Kong with BasicAuth.')
+        print('Could not load user or password from environment variables. Attempting to contact Kong without BasicAuth.')
         response = requests.get(os.environ["KONG_INTERNAL_URL"])
     return response.json().get("data")
 
