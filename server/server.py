@@ -40,11 +40,11 @@ def load_doc():
     for api in kong_apis:
         try:
             app.logger.info(json.dumps(api))
-            response = requests.get(os.environ['KONG_HOST']+api.get("paths")[0] + "/doc") # + api.get("uris")[0] not needed because apis get stripped
+            response = requests.get(os.environ['KONG_HOST']+str(api.get("paths")[0]) + "/doc") # + api.get("uris")[0] not needed because apis get stripped
             if response.status_code == 200:
                 try:
                     #if entry contains empty basepath, replace with basePath from Kong
-                    definition = response.text.replace("\"basePath\": \"/\"", "\"basePath\": \""+api.get("paths")[0]+"/\"")
+                    definition = response.text.replace("\"basePath\": \"/\"", "\"basePath\": \""+str(api.get("paths")[0])+"/\"")
                     if definition.find('host') == -1:
                         #if entry contains no host, set KONG_HOST
                         definition = definition.replace("\"swagger\": \"2.0\",", "\"swagger\": \"2.0\",\n\"host\": \""+os.environ['KONG_HOST']+"\",")
@@ -55,9 +55,9 @@ def load_doc():
                     db.db["swagger"].insert({
                         "swagger": definition
                     })
-                    app.logger.info("inserted swagger file from documentation endpoint of service " + api.get("paths")[0])
+                    app.logger.info("inserted swagger file from documentation endpoint of service " + str(api.get("paths")[0]))
                 except ValueError as e:
-                    app.logger.info("document from" + api.get("paths")[0] +" /doc endpoint is not json, therefore dont get loaded")
+                    app.logger.info("document from" + str(api.get("paths")[0]) +" /doc endpoint is not json, therefore dont get loaded")
             else:
                 app.logger.info(api.get("name") + " responded with " + str(response.status_code) + ". No documentation added.")
         except Exception as e:
