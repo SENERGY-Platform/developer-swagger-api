@@ -46,7 +46,7 @@ def load_doc():
             if response.status_code == 200:
                 try:
                     #if entry contains empty basepath, replace with basePath from Kong
-                    app.logger.debug("Setting basePath if not set")
+                    app.logger.info("Setting basePath if not set")
                     definition = response.text.replace("\"basePath\": \"/\"", "\"basePath\": \""+str(api.get("paths")[0])+"/\"")
                     if definition.find('host') == -1:
                         app.logger.info("Did not find host entry, setting to "+os.environ['KONG_HOST'])
