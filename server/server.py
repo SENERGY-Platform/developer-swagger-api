@@ -41,7 +41,7 @@ def load_doc():
         try:
             app.logger.info(json.dumps(api))
             app.logger.info("Trying to get doc from "+str(api.get("paths")[0]))
-            response = requests.get(os.environ['KONG_HOST']+str(api.get("paths")[0]) + "/doc")
+            response = requests.get('http://'+os.environ['KONG_HOST']+str(api.get("paths")[0]) + "/doc")
             app.logger.info("Got response with code "+str(response.status_code))
             if response.status_code == 200:
                 try:
