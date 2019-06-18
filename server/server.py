@@ -40,15 +40,20 @@ def load_doc():
     for api in kong_apis:
         try:
             app.logger.info(json.dumps(api))
-            response = requests.get(os.environ['KONG_HOST']+str(api.get("paths")[0]) + "/doc") # + api.get("uris")[0] not needed because apis get stripped
+            app.logger.debug("Trying to get doc from "+str(api.get("paths")[0]))
+            response = requests.get(os.environ['KONG_HOST']+str(api.get("paths")[0]) + "/doc")
+            app.logger.debug("Got response with code "+str(response.status_code))
             if response.status_code == 200:
                 try:
                     #if entry contains empty basepath, replace with basePath from Kong
+                    app.logger.debug("Setting basePath if not set")
                     definition = response.text.replace("\"basePath\": \"/\"", "\"basePath\": \""+str(api.get("paths")[0])+"/\"")
                     if definition.find('host') == -1:
+                        app.logger.debug("Did not find host entry, setting to "+os.environ['KONG_HOST'])
                         #if entry contains no host, set KONG_HOST
                         definition = definition.replace("\"swagger\": \"2.0\",", "\"swagger\": \"2.0\",\n\"host\": \""+os.environ['KONG_HOST']+"\",")
                     if definition.find('schemes') == -1:
+                        app.logger.debug("Did not find schemes entry, setting to [https,http]")
                         #if entry containes no schemes, add http/https
                         definition = definition.replace("\"swagger\": \"2.0\",", "\"swagger\": \"2.0\",\n\"schemes\": [\"https\", \"http\"],")
                     json.loads(definition)
