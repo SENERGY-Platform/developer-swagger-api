@@ -7,7 +7,7 @@ from time import strftime
 import requests
 from requests.auth import HTTPBasicAuth
 import json
-from flask_restful_swagger_2 import Api
+from flask_restx import Api
 from threading import Timer
 
 app = Flask(__name__)

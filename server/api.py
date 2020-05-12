@@ -1,12 +1,13 @@
 import db
 import requests
 from flask import request, jsonify
-from flask_restful import Resource
-import os 
+from flask_restx import Resource
+import os
 import server
 import json
 import copy
 import jwt
+
 
 def transform_swagger_permission(swagger, roles):
     filtered_swagger = copy.deepcopy(swagger)
@@ -21,7 +22,7 @@ def transform_swagger_permission(swagger, roles):
                         payload = {
                             "subject": role,
                             "action": method.upper(),
-                            "resource":  "endpoints" + transformed_path
+                            "resource": "endpoints" + transformed_path
                         }
                         ladon = "{url}/access".format(url=os.environ["LADON_URL"])
                         response = requests.get(ladon, data=json.dumps(payload)).json()
@@ -31,11 +32,11 @@ def transform_swagger_permission(swagger, roles):
                         if response.get("Result"):
                             user_has_permission = True
                             break
-                                    
+
                     if not user_has_permission:
                         del filtered_swagger.get("paths")[path][method]
     return filtered_swagger
-            
+
 
 class SwaggerAPI(Resource):
     def get(self):
@@ -50,7 +51,8 @@ class SwaggerAPI(Resource):
             server.app.logger.info("user role is admin -> return all")
             return jsonify([json.loads(swagger.get("swagger")) for swagger in all_swagger])
         else:
-            server.app.logger.info("user role is not admin -> remove paths from swagger where user role does not have access")
+            server.app.logger.info(
+                "user role is not admin -> remove paths from swagger where user role does not have access")
             filtered_swagger = []
             for swagger in all_swagger:
                 # json load, otherwise the json string gets escaped with jsonify
@@ -73,5 +75,3 @@ class SwaggerAPI(Resource):
                         transformed_swagger = transform_swagger_permission(complete_swagger, ["admin"])
                         filtered_swagger.append(transformed_swagger)
             return jsonify(filtered_swagger)
-
-
