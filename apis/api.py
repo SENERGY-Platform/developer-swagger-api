@@ -1,13 +1,15 @@
-import db
 import requests
 from flask import request, jsonify
-from flask_restx import Resource
+from flask_restx import Resource, Namespace, abort
+from apis.db import db
+import apis.util.kong as kong
+import logging
 import os
-import server
 import json
 import copy
 import jwt
 
+api = Namespace("swagger")
 
 def transform_swagger_permission(swagger, roles):
     filtered_swagger = copy.deepcopy(swagger)
@@ -26,9 +28,9 @@ def transform_swagger_permission(swagger, roles):
                         }
                         ladon = "{url}/access".format(url=os.environ["LADON_URL"])
                         response = requests.get(ladon, data=json.dumps(payload)).json()
-                        server.app.logger.info("check for authorization at ladon: ")
-                        server.app.logger.info("Request Data: " + json.dumps(payload))
-                        server.app.logger.info("Response Data: " + json.dumps(response))
+                        logging.info("check for authorization at ladon: ")
+                        logging.info("Request Data: " + json.dumps(payload))
+                        logging.info("Response Data: " + json.dumps(response))
                         if response.get("Result"):
                             user_has_permission = True
                             break
@@ -37,21 +39,24 @@ def transform_swagger_permission(swagger, roles):
                         del filtered_swagger.get("paths")[path][method]
     return filtered_swagger
 
-
+@api.route('')
 class SwaggerAPI(Resource):
     def get(self):
-        token = jwt.decode(request.headers.get("Authorization").split(" ")[1], verify=False)
+        try:
+            token = jwt.decode(request.headers.get("Authorization").split(" ")[1], verify=False)
+        except Exception:
+            abort(401)
         roles = token.get("realm_access")
         if roles:
             roles = roles.get("roles")
 
         all_swagger = db.db["swagger"].find({})
-        public_apis = server.getRoutesFromKong()
+        public_apis = kong.getRoutesFromKong()
         if "admin" in roles:
-            server.app.logger.info("user role is admin -> return all")
+            logging.info("user role is admin -> return all")
             return jsonify([json.loads(swagger.get("swagger")) for swagger in all_swagger])
         else:
-            server.app.logger.info(
+            logging.info(
                 "user role is not admin -> remove paths from swagger where user role does not have access")
             filtered_swagger = []
             for swagger in all_swagger:
@@ -60,10 +65,10 @@ class SwaggerAPI(Resource):
                 try:
                     complete_swagger = json.loads(swagger.get("swagger"))
                 except ValueError as e:
-                    server.app.logger.info(e)
+                    logging.info(e)
 
                 if complete_swagger:
-                    server.app.logger.info("swagger file was parsed to json")
+                    logging.info("swagger file was parsed to json")
                     # Check if API is public accessible
                     if complete_swagger.get("host") == os.environ["KONG_HOST"]:
                         for api in public_apis:
