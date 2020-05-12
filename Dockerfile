@@ -1,5 +1,18 @@
-FROM python:3.6-onbuild
+FROM python:3
+
+COPY ./requirements.txt /
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY server /server
 
 EXPOSE 5000
 
-CMD [ "gunicorn", "-k", "gthread", "--threads", "8", "-b", "0.0.0.0:5000", "--access-logfile", "-", "--keep-alive", "60", "main" ]
+COPY ./docker-entrypoint.sh /server
+
+#RUN chmod +x /server/docker-entrypoint.sh
+
+#ENTRYPOINT [ "/server/docker-entrypoint.sh" ]
+
+WORKDIR /server
+
+CMD FLASK_APP=./server.py flask run --host=0.0.0.0
