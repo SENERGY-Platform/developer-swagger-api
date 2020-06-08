@@ -71,10 +71,8 @@ class SwaggerAPI(Resource):
                     logging.info("swagger file was parsed to json")
                     # Check if API is public accessible
                     if complete_swagger.get("host") == os.environ["KONG_HOST"]:
-                        for api in public_apis:
-                            if complete_swagger.get("basePath") == api.get("uris")[0]:
-                                transformed_swagger = transform_swagger_permission(complete_swagger, roles)
-                                filtered_swagger.append(transformed_swagger)
+                        transformed_swagger = transform_swagger_permission(complete_swagger, roles)
+                        filtered_swagger.append(transformed_swagger)
                     else:
                         # APIs is not in KONG, therefor accessible
                         transformed_swagger = transform_swagger_permission(complete_swagger, ["admin"])
