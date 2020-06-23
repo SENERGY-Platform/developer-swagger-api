@@ -1,13 +1,15 @@
-import requests
-from flask import request, jsonify
-from flask_restx import Resource, Namespace, abort
-from apis.db import db
-import apis.util.kong as kong
+import copy
+import json
 import logging
 import os
-import json
-import copy
+
 import jwt
+from flask import request, jsonify
+from flask_restx import Resource, Namespace, abort
+
+import apis.util.authorization as authorization
+import apis.util.kong as kong
+from apis.db import db
 
 api = Namespace("swagger")
 
@@ -20,24 +22,14 @@ def transform_swagger_permission(swagger, roles):
                 if method:
                     user_has_permission = False
                     for role in roles:
-                        transformed_path = (swagger.get("basePath") + path).replace("/", ":")
-                        payload = {
-                            "subject": role,
-                            "action": method.upper(),
-                            "resource": "endpoints" + transformed_path
-                        }
-                        ladon = "{url}/access".format(url=os.environ["LADON_URL"])
-                        response = requests.get(ladon, data=json.dumps(payload)).json()
-                        logging.info("check for authorization at ladon: ")
-                        logging.info("Request Data: " + json.dumps(payload))
-                        logging.info("Response Data: " + json.dumps(response))
-                        if response.get("Result"):
+                        if authorization.has_access(role, swagger.get("basePath") + path, method.upper()):
                             user_has_permission = True
                             break
 
                     if not user_has_permission:
                         del filtered_swagger.get("paths")[path][method]
     return filtered_swagger
+
 
 @api.route('')
 class SwaggerAPI(Resource):
