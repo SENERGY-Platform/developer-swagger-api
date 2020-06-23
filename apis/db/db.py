@@ -6,8 +6,13 @@ from threading import Timer
 import json
 import logging
 
-client = MongoClient('mongodb://{host}:{port}/'.format(host=os.environ["DB_HOST"], port=os.environ["DB_PORT"]))
-db = client.swagger
+logger = logging.getLogger("apis.db.db")
+
+if "DB_HOST" not in os.environ or "DB_HOST" == "" or "DB_PORT" not in os.environ or "DB_PORT" == "":
+    logger.error("DB_HOST and/or DB_PORT not set")
+else:
+    client = MongoClient('mongodb://{host}:{port}/'.format(host=os.environ["DB_HOST"], port=os.environ["DB_PORT"]))
+    db = client.swagger
 
 
 def load_doc():

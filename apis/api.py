@@ -12,10 +12,15 @@ import apis.util.kong as kong
 from apis.db import db
 
 api = Namespace("swagger")
+logger = logging.getLogger("apis.api")
+
 
 def transform_swagger_permission(swagger, roles):
     filtered_swagger = copy.deepcopy(swagger)
     # Remove Methods and path were the role has no permissions
+    if "paths" not in swagger:
+        logger.warning("transform_swagger_permission called with invalid swagger object")
+        return filtered_swagger
     for path in swagger.get("paths"):
         if path:
             for method in swagger.get("paths")[path]:
