@@ -6,7 +6,7 @@ import logging
 logger = logging.getLogger("apis.util.kong")
 
 
-def getRoutesFromKong():
+def get_routes_from_kong():
     try:
         user = os.environ["KONG_INTERNAL_BASIC_USER"]
         pw = os.environ["KONG_INTERNAL_BASIC_PW"]
@@ -18,7 +18,7 @@ def getRoutesFromKong():
     return response.json().get("data")
 
 
-def getServicesFromKong():
+def get_services_from_kong():
     try:
         user = os.environ["KONG_INTERNAL_BASIC_USER"]
         pw = os.environ["KONG_INTERNAL_BASIC_PW"]
@@ -30,7 +30,7 @@ def getServicesFromKong():
     return response.json().get("data")
 
 
-def getUpstream(services, id):
+def get_upstream(services, id):
     for service in services:
         if service.get('id') == id:
             return service

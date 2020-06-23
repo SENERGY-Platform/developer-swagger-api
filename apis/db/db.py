@@ -16,15 +16,15 @@ else:
 
 
 def load_doc():
-    kong_routes = kong.getRoutesFromKong()
-    kong_services = kong.getServicesFromKong()
+    kong_routes = kong.get_routes_from_kong()
+    kong_services = kong.get_services_from_kong()
     logging.info(kong_routes)
 
     for route in kong_routes:
         try:
             logging.info(json.dumps(route))
             logging.info("Trying to get doc from " + str(route.get("paths")[0]))
-            upstream_service = kong.getUpstream(kong_services, route.get("service").get("id"))
+            upstream_service = kong.get_upstream(kong_services, route.get("service").get("id"))
             upstream_url = upstream_service.get("protocol") + "://" + upstream_service.get("host") + ":" + str(
                 upstream_service.get("port")) + "/doc"
             logging.info("Upstream URL is " + upstream_url)

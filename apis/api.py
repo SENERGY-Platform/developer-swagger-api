@@ -48,7 +48,6 @@ class SwaggerAPI(Resource):
             roles = roles.get("roles")
 
         all_swagger = db.db["swagger"].find({})
-        public_apis = kong.getRoutesFromKong()
         if "admin" in roles:
             logging.info("user role is admin -> return all")
             return jsonify([json.loads(swagger.get("swagger")) for swagger in all_swagger])
