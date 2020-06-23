@@ -8,7 +8,6 @@ from flask import request, jsonify
 from flask_restx import Resource, Namespace, abort
 
 import apis.util.authorization as authorization
-import apis.util.kong as kong
 from apis.db import db
 
 api = Namespace("swagger")
@@ -47,7 +46,7 @@ class SwaggerAPI(Resource):
         if roles:
             roles = roles.get("roles")
 
-        all_swagger = db.db["swagger"].find({})
+        all_swagger = db.get_swagger_files()
         if "admin" in roles:
             logging.info("user role is admin -> return all")
             return jsonify([json.loads(swagger.get("swagger")) for swagger in all_swagger])

@@ -64,3 +64,7 @@ def load_doc():
             logging.error(e)
             continue
     Timer(3600.0, load_doc).start()  # reruns function every hour
+
+
+def get_swagger_files():
+    return db.db["swagger"].find({})
