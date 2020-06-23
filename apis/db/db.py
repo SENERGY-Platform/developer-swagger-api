@@ -67,4 +67,4 @@ def load_doc():
 
 
 def get_swagger_files():
-    return db.db["swagger"].find({})
+    return db["swagger"].find({})
