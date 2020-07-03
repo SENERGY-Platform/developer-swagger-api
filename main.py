@@ -11,8 +11,10 @@ import apis.api as swagger_api
 
 
 application = Flask(__name__)
-application.logger.addHandler(logging.StreamHandler())
-application.logger.setLevel(logging.INFO)
+if os.getenv("DEBUG") == "true":
+    logging.basicConfig()
+    logging.getLogger().setLevel(logging.DEBUG)
+
 app_api = Api(application, api_version='0.0')
 app_api.add_namespace(swagger_api.api)
 
@@ -28,7 +30,7 @@ class Docs(Resource):
 def after_request(response):
     if response.status_code != 500:
         ts = strftime('[%Y-%b-%d %H:%M]')
-        application.logger.info('%s %s %s %s %s %s',
+        logging.info('%s %s %s %s %s %s',
                                 ts,
                                 request.remote_addr,
                                 request.method,
