@@ -3,9 +3,8 @@ import json
 import logging
 import os
 
-import jwt
 from flask import request, jsonify
-from flask_restx import Resource, Namespace, abort
+from flask_restx import Resource, Namespace
 
 import apis.util.authorization as authorization
 from apis.db import db
@@ -38,14 +37,11 @@ def transform_swagger_permission(swagger, roles):
 @api.route('')
 class SwaggerAPI(Resource):
     def get(self):
+        roles = []
         try:
-            token = jwt.decode(request.headers.get("Authorization").split(" ")[1], verify=False)
-        except Exception:
-            abort(401)
-        roles = token.get("realm_access")
-        if roles:
-            roles = roles.get("roles")
-
+            roles = request.headers.get("X-User-Roles").split(",")
+        except AttributeError:  # missing header
+            pass
         all_swagger = db.get_swagger_files()
         if "admin" in roles:
             logging.info("user role is admin -> return all")

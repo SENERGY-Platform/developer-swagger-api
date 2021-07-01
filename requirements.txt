@@ -3,5 +3,4 @@ marshmallow
 requests
 prance
 pymongo
-PyJWT
 gunicorn
