@@ -39,7 +39,7 @@ class SwaggerAPI(Resource):
     def get(self):
         roles = []
         try:
-            roles = request.headers.get("X-User-Roles").split(",")
+            roles = request.headers.get("X-User-Roles").split(", ")
         except AttributeError:  # missing header
             pass
         logging.info(str(roles))
