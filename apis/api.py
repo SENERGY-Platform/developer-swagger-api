@@ -42,6 +42,7 @@ class SwaggerAPI(Resource):
             roles = request.headers.get("X-User-Roles").split(",")
         except AttributeError:  # missing header
             pass
+        logging.info(str(roles))
         all_swagger = db.get_swagger_files()
         if "admin" in roles:
             logging.info("user role is admin -> return all")
