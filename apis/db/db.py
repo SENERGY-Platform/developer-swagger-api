@@ -48,7 +48,7 @@ def load_doc():
                     # if entry contains no host, set KONG_HOST
                     if 'host' not in swagger_definition:
                         logging.info("Did not find host entry, setting to " + os.environ['KONG_HOST'])
-                        swagger_definition['host'] = os.environ['KONG_HOST'] + os.environ['KONG_PORT']
+                        swagger_definition['host'] = os.environ['KONG_HOST'] + ":" + os.environ['KONG_PORT']
                     
                     # if entry containes no schemes, add http/https
                     if 'schemes' not in swagger_definition:
