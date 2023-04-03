@@ -40,15 +40,8 @@ def load_doc():
                 swagger_definition = json.loads(response.text)
                 logging.debug("Length is " + str(len(response.text)))
                 try:
-                    # if entry contains empty basepath, replace with basePath from Kong
-                    if 'basePath' not in swagger_definition:
-                        logging.info("Setting basePath if not set")
-                        swagger_definition['basePath'] = path
-                  
-                    # if entry contains no host, set KONG_HOST
-                    if 'host' not in swagger_definition:
-                        logging.info("Did not find host entry, setting to " + os.environ['KONG_HOST'])
-                        swagger_definition['host'] = os.environ['KONG_HOST'] + ":" + os.environ['KONG_PORT']
+                    swagger_definition['basePath'] = path
+                    swagger_definition['host'] = os.environ['KONG_HOST'] + ":" + os.environ['KONG_PORT']
                     
                     # if entry containes no schemes, add http/https
                     if 'schemes' not in swagger_definition:
