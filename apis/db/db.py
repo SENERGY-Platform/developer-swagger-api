@@ -37,24 +37,25 @@ def load_doc():
             response = requests.get(upstream_url, timeout=1)
             logging.info("Got response with code " + str(response.status_code))
             if response.status_code == 200:
+                swagger_definition = json.loads(response.text)
                 logging.debug("Length is " + str(len(response.text)))
                 try:
                     # if entry contains empty basepath, replace with basePath from Kong
-                    logging.info("Setting basePath if not set")
-                    definition = response.text.replace("\"basePath\": \"/\"",
-                                                       "\"basePath\": \"" + path + "/\"")
-                    if definition.find('host') == -1:
+                    if 'basePath' not in swagger_definition:
+                        logging.info("Setting basePath if not set")
+                        swagger_definition['basePath'] = path
+                  
+                    # if entry contains no host, set KONG_HOST
+                    if 'host' not in swagger_definition:
                         logging.info("Did not find host entry, setting to " + os.environ['KONG_HOST'])
-                        # if entry contains no host, set KONG_HOST
-                        definition = definition.replace("\"swagger\": \"2.0\",",
-                                                        "\"swagger\": \"2.0\",\n\"host\": \"" + os.environ[
-                                                            'KONG_HOST'] + "\",")
-                    if definition.find('schemes') == -1:
-                        logging.info("Did not find schemes entry, setting to [https,http]")
-                        # if entry containes no schemes, add http/https
-                        definition = definition.replace("\"swagger\": \"2.0\",",
-                                                        "\"swagger\": \"2.0\",\n\"schemes\": [\"https\", \"http\"],")
-                    collection.replace_one({"path": path}, {"path": path, "swagger": definition}, upsert=True)
+                        swagger_definition['host'] = os.environ['KONG_HOST'] + os.environ['KONG_PORT']
+                    
+                    # if entry containes no schemes, add http/https
+                    if 'schemes' not in swagger_definition:
+                        logging.info("Did not find schemes entry, setting to [https]")
+                        swagger_definition['schemes'] = ['https']
+
+                    collection.replace_one({"path": path}, {"path": path, "swagger": json.dumps(swagger_definition)}, upsert=True)
                     logging.info(
                         "inserted swagger file from documentation endpoint of service " + path)
                 except ValueError as e:
