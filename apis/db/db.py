@@ -41,7 +41,10 @@ def load_doc():
                 logging.debug("Length is " + str(len(response.text)))
                 try:
                     swagger_definition['basePath'] = path
-                    swagger_definition['host'] = os.environ['KONG_HOST'] + ":" + os.environ['KONG_PORT']
+                    swagger_definition['host'] = os.environ['KONG_HOST'] 
+                    
+                    if os.environ.get('KONG_PORT'):
+                        swagger_definition['host'] += ":" + os.environ['KONG_PORT']
                     
                     # if entry containes no schemes, add http/https
                     if 'schemes' not in swagger_definition:
